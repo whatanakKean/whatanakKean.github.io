@@ -1,1201 +1,928 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whatanak Kean - Personal Portfolio</title>
+  <title>Assessing MSME Market Dynamics and Resilience in Phnom Penh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+    .section {
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      padding: 1rem 0;
+    }
+    .content-wrapper {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1rem;
+    }
+    #leaflet-map {
+      width: 100%;
+      height: 80vh;
+      min-height: 30px;
+      padding: 0.5rem;
+      margin: 1rem 0;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      background-color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .chart-container{
+      width: 100%;
+      height: 80vh;
+      min-height: 30px;
+      padding: 0.5rem;
+      margin: 1rem 0;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      background-color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .selector {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      background-color: #fff;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 300px;
+    }
+    .selector:focus {
+      border-color: #5470c6;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(84, 112, 198, 0.3);
+    }
+    .scroll-down {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #333;
+      font-size: 1.5rem;
+      cursor: pointer;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) translateX(-50%);
+      }
+      40% {
+        transform: translateY(-1rem) translateX(-50%);
+      }
+      60% {
+        transform: translateY(-0.5rem) translateX(-50%);
+      }
+    }
+    .floating-nav {
+      position: fixed;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .floating-nav {
+        display: block;
+      }
+    }
+    .nav-item {
+      display: block;
+      width: 0.75rem;
+      height: 0.75rem;
+      margin: 0.5rem;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .nav-item.active {
+      background: #336666;
+      transform: scale(1.2);
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s ease;
+    }
 
-  <!--
-    - favicon
-  -->
-  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 75%; /* Changed from 90% to 75% */
+      max-width: 75vw; /* Changed to 75% of viewport width */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      animation: modalFadeIn 0.3s ease;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
 
-  <!--
-    - custom css link
-  -->
-  <link rel="stylesheet" href="./assets/css/style.css">
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .close-button {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+    .close-button:hover {
+      color: #333;
+    }
+    /* Floating logo */
+    /* Logo positioned at top-left (not floating) */
+    .logo {
+      margin-left: 10px;
+      border-radius: 5px;
+      width: 120px;
+    }
 
-  <!--
-    - google font link
-  -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    @media (min-width: 768px) {
+      .logo {
+        width: 120px;
+        /* top and left removed */
+      }
+    }
+
+    .logo img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Map controls */
+    .map-controls {
+      display: flex;
+      flex-direction: row; /* Always row */
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      width: 100%;
+    }
+    @media (min-width: 640px) {
+      .slider-group {
+        flex-direction: row;
+        align-items: center;
+        width: auto;
+      }
+    }
+    /* Adjust section padding for mobile */
+    @media (max-width: 767px) {
+      .section {
+        padding: 2rem 0;
+      }
+      .content-wrapper {
+        padding: 1rem;
+      }
+    }
+  </style>
 </head>
-
-<body>
-
-  <!--
-    - #MAIN
-  -->
-
-  <main>
-
-    <!--
-      - #SIDEBAR
-    -->
-
-    <aside class="sidebar" data-sidebar>
-
-      <div class="sidebar-info">
-
-        <figure class="avatar-box">
-          <img src="./assets/images/my-avatar.png" alt="Richard hanrick" width="80">
-        </figure>
-
-        <div class="info-content">
-          <h1 class="name" title="Richard hanrick">Richard hanrick</h1>
-
-          <p class="title">Web developer</p>
-        </div>
-
-        <button class="info_more-btn" data-sidebar-btn>
-          <span>Show Contacts</span>
-
-          <ion-icon name="chevron-down"></ion-icon>
-        </button>
-
-      </div>
-
-      <div class="sidebar-info_more">
-
-        <div class="separator"></div>
-
-        <ul class="contacts-list">
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <ion-icon name="mail-outline"></ion-icon>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Email</p>
-
-              <a href="mailto:richard@example.com" class="contact-link">richard@example.com</a>
-            </div>
-
-          </li>
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <ion-icon name="phone-portrait-outline"></ion-icon>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Phone</p>
-
-              <a href="tel:+12133522795" class="contact-link">+1 (213) 352-2795</a>
-            </div>
-
-          </li>
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <ion-icon name="calendar-outline"></ion-icon>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Birthday</p>
-
-              <time datetime="1982-06-23">June 23, 1982</time>
-            </div>
-
-          </li>
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <ion-icon name="location-outline"></ion-icon>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Location</p>
-
-              <address>Sacramento, California, USA</address>
-            </div>
-
-          </li>
-
-        </ul>
-
-        <div class="separator"></div>
-
-        <ul class="social-list">
-
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-facebook"></ion-icon>
-            </a>
-          </li>
-
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-twitter"></ion-icon>
-            </a>
-          </li>
-
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-instagram"></ion-icon>
-            </a>
-          </li>
-
-        </ul>
-
-      </div>
-
-    </aside>
-
-
-
-
-
-    <!--
-      - #main-content
-    -->
-
-    <div class="main-content">
-
-      <!--
-        - #NAVBAR
-      -->
-
-      <nav class="navbar">
-
-        <ul class="navbar-list">
-
-          <li class="navbar-item">
-            <button class="navbar-link  active" data-nav-link>About</button>
-          </li>
-
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Resume</button>
-          </li>
-
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Portfolio</button>
-          </li>
-
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Blog</button>
-          </li>
-
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Contact</button>
-          </li>
-
-        </ul>
-
-      </nav>
-
-
-
-
-
-      <!--
-        - #ABOUT
-      -->
-
-      <article class="about  active" data-page="about">
-
-        <header>
-          <h2 class="h2 article-title">About me</h2>
-        </header>
-
-        <section class="about-text">
-          <p>
-            I'm Creative Director and UI/UX Designer from Sydney, Australia, working in web development and print media.
-            I enjoy
-            turning complex problems into simple, beautiful and intuitive designs.
-          </p>
-
-          <p>
-            My job is to build your website so that it is functional and user-friendly but at the same time attractive.
-            Moreover, I
-            add personal touch to your product and make sure that is eye-catching and easy to use. My aim is to bring
-            across your
-            message and identity in the most creative way. I created web design for many famous brand companies.
-          </p>
-        </section>
-
-
-        <!--
-          - service
-        -->
-
-        <section class="service">
-
-          <h3 class="h3 service-title">What i'm doing</h3>
-
-          <ul class="service-list">
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-design.svg
-                " alt="design icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Web design</h4>
-
-                <p class="service-item-text">
-                  The most modern and high-quality design made at a professional level.
-                </p>
-              </div>
-
-            </li>
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-dev.svg" alt="Web development icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Web development</h4>
-
-                <p class="service-item-text">
-                  High-quality development of sites at the professional level.
-                </p>
-              </div>
-
-            </li>
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-app.svg" alt="mobile app icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Mobile apps</h4>
-
-                <p class="service-item-text">
-                  Professional development of applications for iOS and Android.
-                </p>
-              </div>
-
-            </li>
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-photo.svg" alt="camera icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Photography</h4>
-
-                <p class="service-item-text">
-                  I make high-quality photos of any category at a professional level.
-                </p>
-              </div>
-
-            </li>
-
-          </ul>
-
-        </section>
-
-
-        <!--
-          - testimonials
-        -->
-
-        <section class="testimonials">
-
-          <h3 class="h3 testimonials-title">Testimonials</h3>
-
-          <ul class="testimonials-list has-scrollbar">
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-1.png" alt="Daniel lewis" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Daniel lewis</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-2.png" alt="Jessica miller" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Jessica miller</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-3.png" alt="Emily evans" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Emily evans</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-4.png" alt="Henry william" width="60" data-testimonials-avatar>
-                </figure>
-
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Henry william</h4>
-
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                    lot of experience
-                    and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                    consectetur adipiscing
-                    elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-          </ul>
-
-        </section>
-
-
-        <!--
-          - testimonials modal
-        -->
-
-        <div class="modal-container" data-modal-container>
-
-          <div class="overlay" data-overlay></div>
-
-          <section class="testimonials-modal">
-
-            <button class="modal-close-btn" data-modal-close-btn>
-              <ion-icon name="close-outline"></ion-icon>
-            </button>
-
-            <div class="modal-img-wrapper">
-              <figure class="modal-avatar-box">
-                <img src="./assets/images/avatar-1.png" alt="Daniel lewis" width="80" data-modal-img>
-              </figure>
-
-              <img src="./assets/images/icon-quote.svg" alt="quote icon">
-            </div>
-
-            <div class="modal-content">
-
-              <h4 class="h3 modal-title" data-modal-title>Daniel lewis</h4>
-
-              <time datetime="2021-06-14">14 June, 2021</time>
-
-              <div data-modal-text>
-                <p>
-                  Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                  lot of experience
-                  and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                  consectetur adipiscing
-                  elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                </p>
-              </div>
-
-            </div>
-
-          </section>
-
-        </div>
-
-
-        <!--
-          - clients
-        -->
-
-        <section class="clients">
-
-          <h3 class="h3 clients-title">Clients</h3>
-
-          <ul class="clients-list has-scrollbar">
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-1-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-2-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-3-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-4-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-5-color.png" alt="client logo">
-              </a>
-            </li>
-
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-6-color.png" alt="client logo">
-              </a>
-            </li>
-
-          </ul>
-
-        </section>
-
-      </article>
-
-
-
-
-
-      <!--
-        - #RESUME
-      -->
-
-      <article class="resume" data-page="resume">
-
-        <header>
-          <h2 class="h2 article-title">Resume</h2>
-        </header>
-
-        <section class="timeline">
-
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
-            </div>
-
-            <h3 class="h3">Education</h3>
-          </div>
-
-          <ol class="timeline-list">
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">University school of the arts</h4>
-
-              <span>2007 — 2008</span>
-
-              <p class="timeline-text">
-                Nemo enims ipsam voluptatem, blanditiis praesentium voluptum delenit atque corrupti, quos dolores et
-                quas molestias
-                exceptur.
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">New york academy of art</h4>
-
-              <span>2006 — 2007</span>
-
-              <p class="timeline-text">
-                Ratione voluptatem sequi nesciunt, facere quisquams facere menda ossimus, omnis voluptas assumenda est
-                omnis..
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">High school of art and design</h4>
-
-              <span>2002 — 2004</span>
-
-              <p class="timeline-text">
-                Duis aute irure dolor in reprehenderit in voluptate, quila voluptas mag odit aut fugit, sed consequuntur
-                magni dolores
-                eos.
-              </p>
-
-            </li>
-
-          </ol>
-
-        </section>
-
-        <section class="timeline">
-
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
-            </div>
-
-            <h3 class="h3">Experience</h3>
-          </div>
-
-          <ol class="timeline-list">
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Creative director</h4>
-
-              <span>2015 — Present</span>
-
-              <p class="timeline-text">
-                Nemo enim ipsam voluptatem blanditiis praesentium voluptum delenit atque corrupti, quos dolores et qvuas
-                molestias
-                exceptur.
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Art director</h4>
-
-              <span>2013 — 2015</span>
-
-              <p class="timeline-text">
-                Nemo enims ipsam voluptatem, blanditiis praesentium voluptum delenit atque corrupti, quos dolores et
-                quas molestias
-                exceptur.
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Web designer</h4>
-
-              <span>2010 — 2013</span>
-
-              <p class="timeline-text">
-                Nemo enims ipsam voluptatem, blanditiis praesentium voluptum delenit atque corrupti, quos dolores et
-                quas molestias
-                exceptur.
-              </p>
-
-            </li>
-
-          </ol>
-
-        </section>
-
-        <section class="skill">
-
-          <h3 class="h3 skills-title">My skills</h3>
-
-          <ul class="skills-list content-card">
-
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Web design</h5>
-                <data value="80">80%</data>
-              </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 80%;"></div>
-              </div>
-
-            </li>
-
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Graphic design</h5>
-                <data value="70">70%</data>
-              </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 70%;"></div>
-              </div>
-
-            </li>
-
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">Branding</h5>
-                <data value="90">90%</data>
-              </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 90%;"></div>
-              </div>
-
-            </li>
-
-            <li class="skills-item">
-
-              <div class="title-wrapper">
-                <h5 class="h5">WordPress</h5>
-                <data value="50">50%</data>
-              </div>
-
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 50%;"></div>
-              </div>
-
-            </li>
-
-          </ul>
-
-        </section>
-
-      </article>
-
-
-
-
-
-      <!--
-        - #PORTFOLIO
-      -->
-
-      <article class="portfolio" data-page="portfolio">
-
-        <header>
-          <h2 class="h2 article-title">Portfolio</h2>
-        </header>
-
-        <section class="projects">
-
-          <ul class="filter-list">
-
-            <li class="filter-item">
-              <button class="active" data-filter-btn>All</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Web design</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Applications</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Web development</button>
-            </li>
-
-          </ul>
-
-          <div class="filter-select-box">
-
-            <button class="filter-select" data-select>
-
-              <div class="select-value" data-selecct-value>Select category</div>
-
-              <div class="select-icon">
-                <ion-icon name="chevron-down"></ion-icon>
-              </div>
-
-            </button>
-
-            <ul class="select-list">
-
-              <li class="select-item">
-                <button data-select-item>All</button>
-              </li>
-
-              <li class="select-item">
-                <button data-select-item>Web design</button>
-              </li>
-
-              <li class="select-item">
-                <button data-select-item>Applications</button>
-              </li>
-
-              <li class="select-item">
-                <button data-select-item>Web development</button>
-              </li>
-
-            </ul>
-
-          </div>
-
-          <ul class="project-list">
-
-            <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-1.jpg" alt="finance" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Finance</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-2.png" alt="orizon" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Orizon</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="web design">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-3.jpg" alt="fundo" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Fundo</h3>
-
-                <p class="project-category">Web design</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-4.png" alt="brawlhalla" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Brawlhalla</h3>
-
-                <p class="project-category">Applications</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="web design">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-5.png" alt="dsm." loading="lazy">
-                </figure>
-
-                <h3 class="project-title">DSM.</h3>
-
-                <p class="project-category">Web design</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="web design">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-6.png" alt="metaspark" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">MetaSpark</h3>
-
-                <p class="project-category">Web design</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-7.png" alt="summary" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Summary</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-8.jpg" alt="task manager" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Task Manager</h3>
-
-                <p class="project-category">Applications</p>
-
-              </a>
-            </li>
-
-            <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <img src="./assets/images/project-9.png" alt="arrival" loading="lazy">
-                </figure>
-
-                <h3 class="project-title">Arrival</h3>
-
-                <p class="project-category">Web development</p>
-
-              </a>
-            </li>
-
-          </ul>
-
-        </section>
-
-      </article>
-
-
-
-
-
-      <!--
-        - #BLOG
-      -->
-
-      <article class="blog" data-page="blog">
-
-        <header>
-          <h2 class="h2 article-title">Blog</h2>
-        </header>
-
-        <section class="blog-posts">
-
-          <ul class="blog-posts-list">
-
-            <li class="blog-post-item">
-              <a href="#">
-
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-1.jpg" alt="Design conferences in 2022" loading="lazy">
-                </figure>
-
-                <div class="blog-content">
-
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-
-                  <h3 class="h3 blog-item-title">Design conferences in 2022</h3>
-
-                  <p class="blog-text">
-                    Veritatis et quasi architecto beatae vitae dicta sunt, explicabo.
-                  </p>
-
-                </div>
-
-              </a>
-            </li>
-
-            <li class="blog-post-item">
-              <a href="#">
-
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-2.jpg" alt="Best fonts every designer" loading="lazy">
-                </figure>
-
-                <div class="blog-content">
-
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-
-                  <h3 class="h3 blog-item-title">Best fonts every designer</h3>
-
-                  <p class="blog-text">
-                    Sed ut perspiciatis, nam libero tempore, cum soluta nobis est eligendi.
-                  </p>
-
-                </div>
-
-              </a>
-            </li>
-
-            <li class="blog-post-item">
-              <a href="#">
-
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-3.jpg" alt="Design digest #80" loading="lazy">
-                </figure>
-
-                <div class="blog-content">
-
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-
-                  <h3 class="h3 blog-item-title">Design digest #80</h3>
-
-                  <p class="blog-text">
-                    Excepteur sint occaecat cupidatat no proident, quis nostrum exercitationem ullam corporis suscipit.
-                  </p>
-
-                </div>
-
-              </a>
-            </li>
-
-            <li class="blog-post-item">
-              <a href="#">
-
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-4.jpg" alt="UI interactions of the week" loading="lazy">
-                </figure>
-
-                <div class="blog-content">
-
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-
-                  <h3 class="h3 blog-item-title">UI interactions of the week</h3>
-
-                  <p class="blog-text">
-                    Enim ad minim veniam, consectetur adipiscing elit, quis nostrud exercitation ullamco laboris nisi.
-                  </p>
-
-                </div>
-
-              </a>
-            </li>
-
-            <li class="blog-post-item">
-              <a href="#">
-
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-5.jpg" alt="The forgotten art of spacing" loading="lazy">
-                </figure>
-
-                <div class="blog-content">
-
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-
-                  <h3 class="h3 blog-item-title">The forgotten art of spacing</h3>
-
-                  <p class="blog-text">
-                    Maxime placeat, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </p>
-
-                </div>
-
-              </a>
-            </li>
-
-            <li class="blog-post-item">
-              <a href="#">
-
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-6.jpg" alt="Design digest #79" loading="lazy">
-                </figure>
-
-                <div class="blog-content">
-
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-
-                    <span class="dot"></span>
-
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-
-                  <h3 class="h3 blog-item-title">Design digest #79</h3>
-
-                  <p class="blog-text">
-                    Optio cumque nihil impedit uo minus quod maxime placeat, velit esse cillum.
-                  </p>
-
-                </div>
-
-              </a>
-            </li>
-
-          </ul>
-
-        </section>
-
-      </article>
-
-
-
-
-
-      <!--
-        - #CONTACT
-      -->
-
-      <article class="contact" data-page="contact">
-
-        <header>
-          <h2 class="h2 article-title">Contact</h2>
-        </header>
-
-        <section class="mapbox" data-mapbox>
-          <figure>
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d199666.5651251294!2d-121.58334177520186!3d38.56165006739519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x809ac672b28397f9%3A0x921f6aaa74197fdb!2sSacramento%2C%20CA%2C%20USA!5e0!3m2!1sen!2sbd!4v1647608789441!5m2!1sen!2sbd"
-              width="400" height="300" loading="lazy"></iframe>
-          </figure>
-        </section>
-
-        <section class="contact-form">
-
-          <h3 class="h3 form-title">Contact Form</h3>
-
-          <form action="#" class="form" data-form>
-
-            <div class="input-wrapper">
-              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
-
-              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
-            </div>
-
-            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
-
-            <button class="form-btn" type="submit" disabled data-form-btn>
-              <ion-icon name="paper-plane"></ion-icon>
-              <span>Send Message</span>
-            </button>
-
-          </form>
-
-        </section>
-
-      </article>
-
+<body class="bg-gray-50">
+  <!-- Floating Navigation -->
+  <div class="floating-nav">
+    <a href="#section0" class="nav-item active" data-section="section0"></a>
+    <a href="#section1" class="nav-item" data-section="section1"></a>
+  </div>
+
+  <!-- Section 1: Pie Chart -->
+  <section id="section0" class="section">
+    <div class="text-center mb-2 md:mb-4" data-aos="fade-up">
+      <h2 class="text-xl md:text-xl font-bold text-black">MSME Market Dynamics and Resilience in Phnom Penh</h2>
     </div>
+    <div class="content-wrapper max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-end items-start md:items-center gap-2 md:gap-3 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <label for="chart-data-select-1" class="font-medium text-sm md:text-base">Select Data:</label>
+        <select id="chart-data-select-1" class="selector">
+          <option value="establishment">Locations with/without establishments</option>
+          <option value="status">Share of closed and operating establishments</option>
+        </select>
+      </div>
+      
+      <div id="echart-container1" class="chart-container" data-aos="zoom-in" data-aos-delay="300"></div>
+    </div>
+    <div class="scroll-down" onclick="scrollToSection('section1')">↓</div>
+  </section>
 
-  </main>
+  <!-- Section 0: Full-screen Map with Overlay Introduction -->
+  <section id="section1" class="section" style="background-color: #336666;">
+    <div class="container mx-auto px-4 py-2 md:px-6 md:py-5">      
+      <div class="bg-white rounded-xl md:rounded-xl shadow-xl overflow-hidden" data-aos="zoom-in">
+        <div id="leaflet-map" class="w-full"></div>
+        <div class="p-2 md:p-4 border-t border-gray-100">
+          <div class="map-controls">
+            <div class="button-group">
+              <button id="play-button" class="px-4 py-2 text-white rounded-lg font-medium transition flex items-center text-sm md:text-base" style="background-color: #336666;" onmouseover="this.style.backgroundColor='#2b5555'" onmouseout="this.style.backgroundColor='#336666'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 sm:mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+                <span class="hidden sm:inline">Play</span>
+              </button>
 
+              <button id="stop-button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition flex items-center text-sm md:text-base" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 sm:mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                <span class="hidden sm:inline">Stop</span>
+              </button>
+            </div>
+            
+            <div class="slider-group flex items-center gap-4 flex-wrap sm:flex-nowrap">
+              <span class="hidden sm:inline text-sm font-medium text-gray-700 whitespace-nowrap">Time Period:</span>
 
+              <div class="flex items-center gap-4 w-full md:w-auto">
+                <input type="range" id="month-slider" min="0" max="11" value="0"
+                  class="month-slider w-full md:w-64 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                <span id="month-label"
+                  class="text-sm font-medium text-gray-700 min-w-[100px] text-center md:text-left whitespace-nowrap">
+                  January 2023
+                </span>
+              </div>
+            </div>
 
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </section>
 
+  <!-- Modal -->
+  <div id="map-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">×</span>
+      <h3 class="text-lg font-bold mb-2">Business Information</h3>
+      <p id="modal-value" class="text-gray-600"></p>
+    </div>
+  </div>
 
+  <script>
+    // Initialize AOS (Animate On Scroll)
+    AOS.init({
+      once: true,
+      easing: 'ease-in-out',
+      offset: 120,
+      duration: 600
+    });
+    
+    // Scroll to section function
+    function scrollToSection(sectionId) {
+      document.getElementById(sectionId).scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+    
+    // Update floating navigation on scroll
+    window.addEventListener('scroll', function() {
+      const sections = document.querySelectorAll('.section');
+      const navItems = document.querySelectorAll('.nav-item');
+      
+      let currentSection = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= sectionTop - 200) {
+          currentSection = section.id;
+        }
+      });
+      
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.section === currentSection) {
+          item.classList.add('active');
+        }
+      });
+    });
+  </script>
 
-  <!--
-    - custom js link
-  -->
-  <script src="./assets/js/script.js"></script>
+  <script>
+    // --- Data --- 
 
-  <!--
-    - ionicon link
-  -->
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    // Fig 1
+    const locations_with_or_without_establishments = [
+        {
+            "a6": "Has Establishment",
+            "n": 14820,
+            "percent": 95.9409594095941,
+            "label_text": "14820 (95.9%)"
+        },
+        {
+            "a6": "No Establishment",
+            "n": 627,
+            "percent": 4.059040590405904,
+            "label_text": "627 (4.1%)"
+        }
+    ];
 
+    // Fig 2
+    const share_of_closed_and_operating_establishments = [
+      {
+          "count": 14820,
+          "type": "Operating Establishments",
+          "percentage": 92.8
+      },
+      {
+          "count": 1142,
+          "type": "Closed Establishments",
+          "percentage": 7.2
+      }
+    ];
+
+    // Fig 3
+    const types_of_operating_establishments = [
+        {
+            "q2_1": "Accommodation and food services activities",
+            "n": 3537,
+            "percent": 23.88089933157788
+        },
+        {
+            "q2_1": "Wholesale and retail trade",
+            "n": 5700,
+            "percent": 38.48490986429006
+        },
+        {
+            "q2_1": "Repair of motor vehicles and motorcycles",
+            "n": 597,
+            "percent": 4.030787927891432
+        },
+        {
+            "q2_1": "Agriculture, forestry and fishing",
+            "n": 12,
+            "percent": 0.0810208628721896
+        },
+        {
+            "q2_1": "Mining and quarrying",
+            "n": 1,
+            "percent": 0.006751738572682465
+        },
+        {
+            "q2_1": "Manufacturing",
+            "n": 1498,
+            "percent": 10.11410438187833
+        },
+        {
+            "q2_1": "Electricity, gas, steam and air conditioning supply",
+            "n": 119,
+            "percent": 0.8034568901492135
+        },
+        {
+            "q2_1": "Construction",
+            "n": 118,
+            "percent": 0.796705151576531
+        },
+        {
+            "q2_1": "Transportation and storage",
+            "n": 132,
+            "percent": 0.8912294915940856
+        },
+        {
+            "q2_1": "Information and communication",
+            "n": 21,
+            "percent": 0.1417865100263318
+        },
+        {
+            "q2_1": "Financial and insurance activities",
+            "n": 211,
+            "percent": 1.424616838836
+        },
+        {
+            "q2_1": "Bank and insurance companies",
+            "n": 54,
+            "percent": 0.3645938829248531
+        },
+        {
+            "q2_1": "Real estate activities",
+            "n": 585,
+            "percent": 3.949767065019242
+        },
+        {
+            "q2_1": "Professional, scientific and technical",
+            "n": 112,
+            "percent": 0.7561947201404361
+        },
+        {
+            "q2_1": "Administrative and support service",
+            "n": 103,
+            "percent": 0.695429072986294
+        },
+        {
+            "q2_1": "Public administration and defense",
+            "n": 14,
+            "percent": 0.09452434001755451
+        },
+        {
+            "q2_1": "Public education",
+            "n": 13,
+            "percent": 0.08777260144487206
+        },
+        {
+            "q2_1": "Private education",
+            "n": 149,
+            "percent": 1.006009047329687
+        },
+        {
+            "q2_1": "Human health and social work activity",
+            "n": 438,
+            "percent": 2.95726149483492
+        },
+        {
+            "q2_1": "Art, entertainment and recreation",
+            "n": 97,
+            "percent": 0.6549186415501992
+        },
+        {
+            "q2_1": "Other service activities",
+            "n": 1228,
+            "percent": 8.291134967254068
+        },
+        {
+            "q2_1": "Activities of households as employers",
+            "n": 1,
+            "percent": 0.006751738572682465
+        },
+        {
+            "q2_1": "Activities of extraterritorial organizations",
+            "n": 71,
+            "percent": 0.4793734386604551
+        }
+    ];
+
+    // Fig 4
+    const types_of_closed_establishments = [
+        {
+            "q2_a": "Accommodation and food services activities",
+            "count": 309,
+            "percentage": 27.34513274336283
+        },
+        {
+            "q2_a": "Wholesale and retail trade",
+            "count": 362,
+            "percentage": 32.0353982300885
+        },
+        {
+            "q2_a": "Repair of motor vehicles and motorcycles",
+            "count": 58,
+            "percentage": 5.132743362831858
+        },
+        {
+            "q2_a": "Mining and quarrying",
+            "count": 1,
+            "percentage": 0.08849557522123894
+        },
+        {
+            "q2_a": "Manufacturing",
+            "count": 101,
+            "percentage": 8.938053097345133
+        },
+        {
+            "q2_a": "Electricity, gas, steam and air conditioning supply",
+            "count": 1,
+            "percentage": 0.08849557522123894
+        },
+        {
+            "q2_a": "Construction",
+            "count": 7,
+            "percentage": 0.6194690265486725
+        },
+        {
+            "q2_a": "Transportation and storage",
+            "count": 10,
+            "percentage": 0.8849557522123894
+        },
+        {
+            "q2_a": "Information and communication",
+            "count": 2,
+            "percentage": 0.1769911504424779
+        },
+        {
+            "q2_a": "Financial and insurance activities",
+            "count": 10,
+            "percentage": 0.8849557522123894
+        },
+        {
+            "q2_a": "Bank and insurance companies",
+            "count": 2,
+            "percentage": 0.1769911504424779
+        },
+        {
+            "q2_a": "Real estate activities",
+            "count": 2,
+            "percentage": 0.1769911504424779
+        },
+        {
+            "q2_a": "Professional, scientific and technical",
+            "count": 38,
+            "percentage": 3.36283185840708
+        },
+        {
+            "q2_a": "Administrative and support service",
+            "count": 3,
+            "percentage": 0.2654867256637168
+        },
+        {
+            "q2_a": "Public administration and defense",
+            "count": 2,
+            "percentage": 0.1769911504424779
+        },
+        {
+            "q2_a": "Private education",
+            "count": 6,
+            "percentage": 0.5309734513274336
+        },
+        {
+            "q2_a": "Human health and social work activity",
+            "count": 29,
+            "percentage": 2.566371681415929
+        },
+        {
+            "q2_a": "Art, entertainment and recreation",
+            "count": 9,
+            "percentage": 0.7964601769911505
+        },
+        {
+            "q2_a": "Other service activities",
+            "count": 175,
+            "percentage": 15.48672566371681
+        },
+        {
+            "q2_a": "Activities of households as employers",
+            "count": 1,
+            "percentage": 0.08849557522123894
+        },
+        {
+            "q2_a": "Activities of extraterritorial organizations",
+            "count": 2,
+            "percentage": 0.1769911504424779
+        }
+    ];
+
+    // --- Figure 1 ---
+    const initFig1 = () => {
+      const chartDom = document.getElementById('echart-container1');
+      const chart = echarts.init(chartDom, null, { 
+        renderer: 'svg',
+        width: 'auto',
+        height: 'auto'
+      });
+
+      const getChartData = (type) => {
+        return type === 'establishment'
+          ? locations_with_or_without_establishments.map(item => ({ name: item.a6, value: +item.n }))
+          : share_of_closed_and_operating_establishments.map(item => ({ name: item.type, value: +item.count }));
+      };
+
+      const updateChart = (type) => {
+        const seriesData = getChartData(type);
+        const legendData = seriesData.map(item => item.name);
+
+        const chartTitle = type === 'establishment'
+          ? 'Locations with/without establishments'
+          : 'Share of closed and operating establishments';
+
+        const isMobile = window.innerWidth < 768;
+        const isSmallMobile = window.innerWidth < 480;
+
+        const option = {
+          title: {
+            text: chartTitle,
+            left: 'center',
+            top: isMobile ? '10px' : '0',
+            textStyle: {
+              fontSize: isMobile ? 14 : 18,
+              fontWeight: 'bold'
+            }
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: '{b}: {c} ({d}%)'
+          },
+          legend: {
+            orient: isMobile ? 'horizontal' : 'vertical',
+            top: isMobile ? '40px' : '40px',
+            right: isMobile ? 'center' : '10px',
+            data: legendData,
+            textStyle: {
+              fontSize: isMobile ? 12 : 14
+            }
+          },
+          series: [
+            {
+              name: 'Establishment',
+              type: 'pie',
+              radius: isSmallMobile ? ['40%', '70%'] : ['40%', '70%'],
+              avoidLabelOverlap: false,
+              label: {
+                show: true,
+                formatter: isSmallMobile ? '{d}%' : '{b}: {c} ({d}%)',
+                fontSize: isSmallMobile ? 10 : 12
+              },
+              labelLine: {
+                show: true,
+                length: isSmallMobile ? 5 : 10,
+                length2: isSmallMobile ? 5 : 10
+              },
+              data: seriesData,
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ],
+          graphic: {
+            type: 'text',
+            left: 'center',
+            bottom: 5,
+            style: {
+              text: 'Data source: Cambodia Development Resource Institute',
+              font: isMobile ? '11px Roboto, sans-serif' : '13px Roboto, sans-serif',
+              fill: '#888'
+            }
+          }
+        };
+        
+        chart.setOption(option, true);
+      };
+
+      // Responsive resize handler
+      const resizeHandler = () => {
+        chart.resize();
+        updateChart(document.getElementById('chart-data-select-1').value);
+      };
+
+      // Initial render
+      updateChart('establishment');
+      
+      // Add resize event listener
+      window.addEventListener('resize', resizeHandler);
+
+      // Set up change listener
+      const selectElement = document.getElementById('chart-data-select-1');
+      selectElement.addEventListener('change', (e) => {
+        updateChart(e.target.value);
+      });
+    };
+    
+    const initMap = () => {
+      // Get modal elements
+      const modal = document.getElementById('map-modal');
+      const modalContent = document.querySelector('.modal-content');
+      const modalValue = document.getElementById('modal-value');
+      const closeButton = document.querySelector('.close-button');
+
+      // Modal functions
+      function openModal(content) {
+        modalValue.innerHTML = content;
+        modal.style.display = 'block';
+      }
+
+      function closeModal() {
+        modal.style.display = 'none';
+      }
+
+      // Close modal when clicking X or outside
+      closeButton.addEventListener('click', closeModal);
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Initialize map
+      const map2 = L.map('leaflet-map').setView([11.55, 104.9167], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map2);
+
+      // Sample sangkat data (replace with actual data)
+      const sangkatData = {
+        'Sangkat Toul Kork': {
+          description: 'A bustling area with significant commercial activity, known for its retail and service-based MSMEs.',
+          stats: {
+            'Total Businesses': '1,892',
+            'Most Common Type': 'Retail Trade',
+            'Average Age': '3.8 years',
+            'Closure Rate': '7.1%'
+          }
+        },
+        'Sangkat Phsar Kandal I': {
+          description: 'Central market area with a high concentration of trade and food services.',
+          stats: {
+            'Total Businesses': '2,120',
+            'Most Common Type': 'Food Services',
+            'Average Age': '4.5 years',
+            'Closure Rate': '6.5%'
+          }
+        },
+        'Sangkat Boeung Keng Kang I': {
+          description: 'An emerging hub for professional services and modern businesses.',
+          stats: {
+            'Total Businesses': '1,450',
+            'Most Common Type': 'Professional Services',
+            'Average Age': '2.3 years',
+            'Closure Rate': '8.9%'
+          }
+        }
+        // Add more sangkats as needed
+      };
+
+      // Sample GeoJSON for sangkats (replace with actual GeoJSON data)
+      const sangkatGeoJSON = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: { name: 'Sangkat Toul Kork' },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[
+                [104.912, 11.57], [104.918, 11.57], [104.918, 11.56], [104.912, 11.56], [104.912, 11.57]
+              ]]
+            }
+          },
+          {
+            type: 'Feature',
+            properties: { name: 'Sangkat Phsar Kandal I' },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[
+                [104.925, 11.55], [104.930, 11.55], [104.930, 11.54], [104.925, 11.54], [104.925, 11.55]
+              ]]
+            }
+          },
+          {
+            type: 'Feature',
+            properties: { name: 'Sangkat Boeung Keng Kang I' },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[
+                [104.895, 11.54], [104.900, 11.54], [104.900, 11.53], [104.895, 11.53], [104.895, 11.54]
+              ]]
+            }
+          }
+          // Add more sangkat features
+        ]
+      };
+
+      // Store layer references for animation
+      const sangkatLayers = {};
+
+      // Add GeoJSON layer for sangkats
+      L.geoJSON(sangkatGeoJSON, {
+        style: function(feature) {
+          return {
+            color: '#3b82f6',
+            fillColor: '#3b82f6',
+            fillOpacity: 0.5,
+            weight: 2
+          };
+        },
+        onEachFeature: function(feature, layer) {
+          const sangkatName = feature.properties.name;
+          // Store layer for animation
+          sangkatLayers[sangkatName] = layer;
+          // Bind tooltip
+          layer.bindTooltip(sangkatName, { permanent: false, direction: 'top' });
+          // Bind click event to open modal
+          layer.on('click', function() {
+            const data = sangkatData[sangkatName] || {
+              description: `No detailed data available for ${sangkatName}.`,
+              stats: {}
+            };
+            let content = `<p class="text-sm md:text-base">${data.description}</p><br/><ul class="text-sm md:text-base">`;
+            for (const [key, value] of Object.entries(data.stats)) {
+              content += `<li class="mb-1"><strong>${key}:</strong> ${value}</li>`;
+            }
+            content += '</ul>';
+            openModal(content);
+          });
+        }
+      }).addTo(map2);
+
+      // Play/stop button functionality for map
+      const playButton = document.getElementById('play-button');
+      const stopButton = document.getElementById('stop-button');
+      const monthSlider = document.getElementById('month-slider');
+      const monthLabel = document.getElementById('month-label');
+
+      const months = [
+        'January 2023', 'February 2023', 'March 2023', 'April 2023',
+        'May 2023', 'June 2023', 'July 2023', 'August 2023',
+        'September 2023', 'October 2023', 'November 2023', 'December 2023'
+      ];
+
+      let animationInterval;
+
+      playButton.addEventListener('click', function() {
+        playButton.disabled = true;
+        stopButton.disabled = false;
+        playButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        playButton.classList.add('bg-gray-400');
+        stopButton.classList.remove('bg-gray-200');
+        stopButton.classList.add('bg-red-500', 'hover:bg-red-600');
+
+        animationInterval = setInterval(function() {
+          let nextMonth = parseInt(monthSlider.value) + 1;
+          if (nextMonth > 11) nextMonth = 0;
+          monthSlider.value = nextMonth;
+          updateMonth();
+        }, 1000);
+      });
+
+      stopButton.addEventListener('click', function() {
+        playButton.disabled = false;
+        stopButton.disabled = true;
+        playButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+        playButton.classList.remove('bg-gray-400');
+        stopButton.classList.add('bg-gray-200');
+        stopButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+        clearInterval(animationInterval);
+      });
+
+      monthSlider.addEventListener('input', updateMonth);
+
+      function updateMonth() {
+        const monthIndex = parseInt(monthSlider.value);
+        monthLabel.textContent = months[monthIndex];
+
+        // Update polygon styles based on month (simulating seasonal changes)
+        Object.keys(sangkatLayers).forEach((sangkatName, index) => {
+          const layer = sangkatLayers[sangkatName];
+          // Adjust opacity to simulate activity changes
+          const opacity = 0.3 + (monthIndex * 0.05);
+          // Adjust hue for color variation
+          const hue = 200 + (monthIndex * 10) + (index * 20); // Vary by sangkat
+          layer.setStyle({
+            fillOpacity: Math.min(opacity, 0.8),
+            color: `hsl(${hue}, 80%, 50%)`,
+            fillColor: `hsl(${hue}, 80%, 50%)`
+          });
+        });
+      }
+
+  // Handle map resize on container change
+  const mapContainer = document.getElementById('leaflet-map');
+  const resizeObserver = new ResizeObserver(() => {
+    map2.invalidateSize();
+  });
+  resizeObserver.observe(mapContainer);
+};
+    
+    // Initialize Visualizations
+    document.addEventListener('DOMContentLoaded', () => {
+      initFig1();
+      initMap();
+    });
+  </script>
 </body>
-
 </html>
