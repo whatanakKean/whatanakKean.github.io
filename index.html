@@ -37,6 +37,14 @@
       <div class="p-4 border-t border-gray-100">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
+          <!-- Dataset Selector -->
+          <div class="flex gap-2">
+            <select id="dataset-selector" class="px-4 py-2 bg-white border border-gray-300 rounded-lg font-medium text-sm md:text-base">
+              <option value="dataset1">Business Status Data</option>
+              <option value="dataset2">Establishment Data</option>
+            </select>
+          </div>
+
           <!-- Play/Stop Buttons -->
           <div class="flex gap-2">
             <button id="play-button"
@@ -63,17 +71,17 @@
             </button>
           </div>
 
-          <!-- Slider and Month -->
+          <!-- Slider and Time Period -->
           <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto flex-wrap">
-            <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Time Period:</span>
+            <span id="time-period-label" class="text-sm font-medium text-gray-700 whitespace-nowrap">Time Period:</span>
 
             <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-              <input type="range" id="month-slider" min="0" max="11" value="0"
+              <input type="range" id="time-slider" min="0" max="11" value="0"
                 class="w-full sm:flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
 
-              <span id="month-label"
+              <span id="time-label"
                 class="text-sm font-medium text-gray-700 text-center sm:text-left px-2 sm:px-0">
-                January 2023
+                January 2025
               </span>
             </div>
           </div>
@@ -91,11 +99,20 @@
       <span
         class="close-button absolute right-4 top-3 text-2xl font-bold text-gray-400 cursor-pointer hover:text-gray-600">×</span>
       <h3 class="text-lg font-bold mb-2">Business Information</h3>
-      <p id="modal-value" class="text-gray-600"></p>
+      <div id="modal-content">
+        <p id="modal-district" class="font-medium"></p>
+        <p id="modal-value" class="text-gray-600"></p>
+        <p id="modal-status" class="text-gray-600"></p>
+      </div>
     </div>
   </div>  
 
   <script>
+    // Define the datasets
+    const dataset1 =[{"month":"2024-04-01T00:00:00","a3":"Chak Angrae Leu","count":16,"status":"New"},{"month":"2024-04-01T00:00:00","a3":"Chak Angrae Kraom","count":18,"status":"New"},{"month":"2024-04-01T00:00:00","a3":"Stueng Mean Chey 1","count":17,"status":"New"},{"month":"2024-04-01T00:00:00","a3":"Stueng Mean Chey 2","count":25,"status":"New"},{"month":"2024-04-01T00:00:00","a3":"Stueng Mean Chey 3","count":13,"status":"New"},{"month":"2024-04-01T00:00:00","a3":"Boeng Tumpun 1","count":12,"status":"New"},{"month":"2024-04-01T00:00:00","a3":"Boeng Tumpun 2","count":17,"status":"New"},{"month":"2024-05-01T00:00:00","a3":"Chak Angrae Leu","count":2,"status":"New"},{"month":"2024-05-01T00:00:00","a3":"Chak Angrae Kraom","count":7,"status":"New"},{"month":"2024-05-01T00:00:00","a3":"Stueng Mean Chey 1","count":24,"status":"New"},{"month":"2024-05-01T00:00:00","a3":"Stueng Mean Chey 2","count":12,"status":"New"},{"month":"2024-05-01T00:00:00","a3":"Stueng Mean Chey 3","count":17,"status":"New"},{"month":"2024-05-01T00:00:00","a3":"Boeng Tumpun 1","count":11,"status":"New"},{"month":"2024-05-01T00:00:00","a3":"Boeng Tumpun 2","count":6,"status":"New"},{"month":"2024-06-01T00:00:00","a3":"Chak Angrae Leu","count":9,"status":"New"},{"month":"2024-06-01T00:00:00","a3":"Chak Angrae Kraom","count":14,"status":"New"},{"month":"2024-06-01T00:00:00","a3":"Stueng Mean Chey 1","count":21,"status":"New"},{"month":"2024-06-01T00:00:00","a3":"Stueng Mean Chey 2","count":12,"status":"New"},{"month":"2024-06-01T00:00:00","a3":"Stueng Mean Chey 3","count":22,"status":"New"},{"month":"2024-06-01T00:00:00","a3":"Boeng Tumpun 1","count":12,"status":"New"},{"month":"2024-06-01T00:00:00","a3":"Boeng Tumpun 2","count":7,"status":"New"},{"month":"2024-07-01T00:00:00","a3":"Chak Angrae Leu","count":9,"status":"New"},{"month":"2024-07-01T00:00:00","a3":"Chak Angrae Kraom","count":12,"status":"New"},{"month":"2024-07-01T00:00:00","a3":"Stueng Mean Chey 1","count":9,"status":"New"},{"month":"2024-07-01T00:00:00","a3":"Stueng Mean Chey 2","count":19,"status":"New"},{"month":"2024-07-01T00:00:00","a3":"Stueng Mean Chey 3","count":16,"status":"New"},{"month":"2024-07-01T00:00:00","a3":"Boeng Tumpun 1","count":7,"status":"New"},{"month":"2024-07-01T00:00:00","a3":"Boeng Tumpun 2","count":10,"status":"New"},{"month":"2024-08-01T00:00:00","a3":"Chak Angrae Leu","count":8,"status":"New"},{"month":"2024-08-01T00:00:00","a3":"Chak Angrae Kraom","count":12,"status":"New"},{"month":"2024-08-01T00:00:00","a3":"Stueng Mean Chey 1","count":16,"status":"New"},{"month":"2024-08-01T00:00:00","a3":"Stueng Mean Chey 2","count":17,"status":"New"},{"month":"2024-08-01T00:00:00","a3":"Stueng Mean Chey 3","count":21,"status":"New"},{"month":"2024-08-01T00:00:00","a3":"Boeng Tumpun 1","count":11,"status":"New"},{"month":"2024-08-01T00:00:00","a3":"Boeng Tumpun 2","count":10,"status":"New"},{"month":"2024-09-01T00:00:00","a3":"Chak Angrae Leu","count":6,"status":"New"},{"month":"2024-09-01T00:00:00","a3":"Chak Angrae Kraom","count":4,"status":"New"},{"month":"2024-09-01T00:00:00","a3":"Stueng Mean Chey 1","count":17,"status":"New"},{"month":"2024-09-01T00:00:00","a3":"Stueng Mean Chey 2","count":11,"status":"New"},{"month":"2024-09-01T00:00:00","a3":"Stueng Mean Chey 3","count":15,"status":"New"},{"month":"2024-09-01T00:00:00","a3":"Boeng Tumpun 1","count":9,"status":"New"},{"month":"2024-09-01T00:00:00","a3":"Boeng Tumpun 2","count":8,"status":"New"},{"month":"2024-10-01T00:00:00","a3":"Chak Angrae Leu","count":13,"status":"New"},{"month":"2024-10-01T00:00:00","a3":"Chak Angrae Kraom","count":12,"status":"New"},{"month":"2024-10-01T00:00:00","a3":"Stueng Mean Chey 1","count":24,"status":"New"},{"month":"2024-10-01T00:00:00","a3":"Stueng Mean Chey 2","count":27,"status":"New"},{"month":"2024-10-01T00:00:00","a3":"Stueng Mean Chey 3","count":17,"status":"New"},{"month":"2024-10-01T00:00:00","a3":"Boeng Tumpun 1","count":21,"status":"New"},{"month":"2024-10-01T00:00:00","a3":"Boeng Tumpun 2","count":16,"status":"New"},{"month":"2024-11-01T00:00:00","a3":"Chak Angrae Leu","count":9,"status":"New"},{"month":"2024-11-01T00:00:00","a3":"Chak Angrae Kraom","count":13,"status":"New"},{"month":"2024-11-01T00:00:00","a3":"Stueng Mean Chey 1","count":30,"status":"New"},{"month":"2024-11-01T00:00:00","a3":"Stueng Mean Chey 2","count":28,"status":"New"},{"month":"2024-11-01T00:00:00","a3":"Stueng Mean Chey 3","count":31,"status":"New"},{"month":"2024-11-01T00:00:00","a3":"Boeng Tumpun 1","count":17,"status":"New"},{"month":"2024-11-01T00:00:00","a3":"Boeng Tumpun 2","count":17,"status":"New"},{"month":"2024-12-01T00:00:00","a3":"Chak Angrae Leu","count":10,"status":"New"},{"month":"2024-12-01T00:00:00","a3":"Chak Angrae Kraom","count":12,"status":"New"},{"month":"2024-12-01T00:00:00","a3":"Stueng Mean Chey 1","count":23,"status":"New"},{"month":"2024-12-01T00:00:00","a3":"Stueng Mean Chey 2","count":28,"status":"New"},{"month":"2024-12-01T00:00:00","a3":"Stueng Mean Chey 3","count":31,"status":"New"},{"month":"2024-12-01T00:00:00","a3":"Boeng Tumpun 1","count":20,"status":"New"},{"month":"2024-12-01T00:00:00","a3":"Boeng Tumpun 2","count":23,"status":"New"},{"month":"2025-01-01T00:00:00","a3":"Chak Angrae Leu","count":28,"status":"New"},{"month":"2025-01-01T00:00:00","a3":"Chak Angrae Kraom","count":29,"status":"New"},{"month":"2025-01-01T00:00:00","a3":"Stueng Mean Chey 1","count":69,"status":"New"},{"month":"2025-01-01T00:00:00","a3":"Stueng Mean Chey 2","count":69,"status":"New"},{"month":"2025-01-01T00:00:00","a3":"Stueng Mean Chey 3","count":74,"status":"New"},{"month":"2025-01-01T00:00:00","a3":"Boeng Tumpun 1","count":67,"status":"New"},{"month":"2025-01-01T00:00:00","a3":"Boeng Tumpun 2","count":51,"status":"New"},{"month":"2025-02-01T00:00:00","a3":"Chak Angrae Leu","count":17,"status":"New"},{"month":"2025-02-01T00:00:00","a3":"Chak Angrae Kraom","count":23,"status":"New"},{"month":"2025-02-01T00:00:00","a3":"Stueng Mean Chey 1","count":45,"status":"New"},{"month":"2025-02-01T00:00:00","a3":"Stueng Mean Chey 2","count":49,"status":"New"},{"month":"2025-02-01T00:00:00","a3":"Stueng Mean Chey 3","count":57,"status":"New"},{"month":"2025-02-01T00:00:00","a3":"Boeng Tumpun 1","count":44,"status":"New"},{"month":"2025-02-01T00:00:00","a3":"Boeng Tumpun 2","count":25,"status":"New"},{"month":"2025-03-01T00:00:00","a3":"Chak Angrae Leu","count":19,"status":"New"},{"month":"2025-03-01T00:00:00","a3":"Chak Angrae Kraom","count":13,"status":"New"},{"month":"2025-03-01T00:00:00","a3":"Stueng Mean Chey 1","count":34,"status":"New"},{"month":"2025-03-01T00:00:00","a3":"Stueng Mean Chey 2","count":27,"status":"New"},{"month":"2025-03-01T00:00:00","a3":"Stueng Mean Chey 3","count":44,"status":"New"},{"month":"2025-03-01T00:00:00","a3":"Boeng Tumpun 1","count":26,"status":"New"},{"month":"2025-03-01T00:00:00","a3":"Boeng Tumpun 2","count":17,"status":"New"},{"month":"2024-04-01T00:00:00","a3":"Chak Angrae Leu","count":2,"status":"Closed"},{"month":"2024-04-01T00:00:00","a3":"Chak Angrae Kraom","count":7,"status":"Closed"},{"month":"2024-04-01T00:00:00","a3":"Stueng Mean Chey 1","count":7,"status":"Closed"},{"month":"2024-04-01T00:00:00","a3":"Stueng Mean Chey 2","count":8,"status":"Closed"},{"month":"2024-04-01T00:00:00","a3":"Stueng Mean Chey 3","count":8,"status":"Closed"},{"month":"2024-04-01T00:00:00","a3":"Boeng Tumpun 1","count":5,"status":"Closed"},{"month":"2024-04-01T00:00:00","a3":"Boeng Tumpun 2","count":5,"status":"Closed"},{"month":"2024-05-01T00:00:00","a3":"Chak Angrae Leu","count":3,"status":"Closed"},{"month":"2024-05-01T00:00:00","a3":"Chak Angrae Kraom","count":3,"status":"Closed"},{"month":"2024-05-01T00:00:00","a3":"Stueng Mean Chey 1","count":12,"status":"Closed"},{"month":"2024-05-01T00:00:00","a3":"Stueng Mean Chey 2","count":4,"status":"Closed"},{"month":"2024-05-01T00:00:00","a3":"Stueng Mean Chey 3","count":8,"status":"Closed"},{"month":"2024-05-01T00:00:00","a3":"Boeng Tumpun 1","count":6,"status":"Closed"},{"month":"2024-05-01T00:00:00","a3":"Boeng Tumpun 2","count":4,"status":"Closed"},{"month":"2024-06-01T00:00:00","a3":"Chak Angrae Leu","count":4,"status":"Closed"},{"month":"2024-06-01T00:00:00","a3":"Chak Angrae Kraom","count":14,"status":"Closed"},{"month":"2024-06-01T00:00:00","a3":"Stueng Mean Chey 1","count":10,"status":"Closed"},{"month":"2024-06-01T00:00:00","a3":"Stueng Mean Chey 2","count":17,"status":"Closed"},{"month":"2024-06-01T00:00:00","a3":"Stueng Mean Chey 3","count":5,"status":"Closed"},{"month":"2024-06-01T00:00:00","a3":"Boeng Tumpun 1","count":6,"status":"Closed"},{"month":"2024-06-01T00:00:00","a3":"Boeng Tumpun 2","count":8,"status":"Closed"},{"month":"2024-07-01T00:00:00","a3":"Chak Angrae Leu","count":5,"status":"Closed"},{"month":"2024-07-01T00:00:00","a3":"Chak Angrae Kraom","count":4,"status":"Closed"},{"month":"2024-07-01T00:00:00","a3":"Stueng Mean Chey 1","count":4,"status":"Closed"},{"month":"2024-07-01T00:00:00","a3":"Stueng Mean Chey 2","count":7,"status":"Closed"},{"month":"2024-07-01T00:00:00","a3":"Stueng Mean Chey 3","count":10,"status":"Closed"},{"month":"2024-07-01T00:00:00","a3":"Boeng Tumpun 1","count":4,"status":"Closed"},{"month":"2024-07-01T00:00:00","a3":"Boeng Tumpun 2","count":2,"status":"Closed"},{"month":"2024-08-01T00:00:00","a3":"Chak Angrae Leu","count":3,"status":"Closed"},{"month":"2024-08-01T00:00:00","a3":"Chak Angrae Kraom","count":5,"status":"Closed"},{"month":"2024-08-01T00:00:00","a3":"Stueng Mean Chey 1","count":11,"status":"Closed"},{"month":"2024-08-01T00:00:00","a3":"Stueng Mean Chey 2","count":4,"status":"Closed"},{"month":"2024-08-01T00:00:00","a3":"Stueng Mean Chey 3","count":8,"status":"Closed"},{"month":"2024-08-01T00:00:00","a3":"Boeng Tumpun 1","count":7,"status":"Closed"},{"month":"2024-08-01T00:00:00","a3":"Boeng Tumpun 2","count":6,"status":"Closed"},{"month":"2024-09-01T00:00:00","a3":"Chak Angrae Leu","count":4,"status":"Closed"},{"month":"2024-09-01T00:00:00","a3":"Chak Angrae Kraom","count":9,"status":"Closed"},{"month":"2024-09-01T00:00:00","a3":"Stueng Mean Chey 1","count":12,"status":"Closed"},{"month":"2024-09-01T00:00:00","a3":"Stueng Mean Chey 2","count":6,"status":"Closed"},{"month":"2024-09-01T00:00:00","a3":"Stueng Mean Chey 3","count":19,"status":"Closed"},{"month":"2024-09-01T00:00:00","a3":"Boeng Tumpun 1","count":10,"status":"Closed"},{"month":"2024-09-01T00:00:00","a3":"Boeng Tumpun 2","count":2,"status":"Closed"},{"month":"2024-10-01T00:00:00","a3":"Chak Angrae Leu","count":8,"status":"Closed"},{"month":"2024-10-01T00:00:00","a3":"Chak Angrae Kraom","count":4,"status":"Closed"},{"month":"2024-10-01T00:00:00","a3":"Stueng Mean Chey 1","count":11,"status":"Closed"},{"month":"2024-10-01T00:00:00","a3":"Stueng Mean Chey 2","count":16,"status":"Closed"},{"month":"2024-10-01T00:00:00","a3":"Stueng Mean Chey 3","count":16,"status":"Closed"},{"month":"2024-10-01T00:00:00","a3":"Boeng Tumpun 1","count":15,"status":"Closed"},{"month":"2024-10-01T00:00:00","a3":"Boeng Tumpun 2","count":9,"status":"Closed"},{"month":"2024-11-01T00:00:00","a3":"Chak Angrae Leu","count":2,"status":"Closed"},{"month":"2024-11-01T00:00:00","a3":"Chak Angrae Kraom","count":3,"status":"Closed"},{"month":"2024-11-01T00:00:00","a3":"Stueng Mean Chey 1","count":12,"status":"Closed"},{"month":"2024-11-01T00:00:00","a3":"Stueng Mean Chey 2","count":15,"status":"Closed"},{"month":"2024-11-01T00:00:00","a3":"Stueng Mean Chey 3","count":23,"status":"Closed"},{"month":"2024-11-01T00:00:00","a3":"Boeng Tumpun 1","count":12,"status":"Closed"},{"month":"2024-11-01T00:00:00","a3":"Boeng Tumpun 2","count":4,"status":"Closed"},{"month":"2024-12-01T00:00:00","a3":"Chak Angrae Leu","count":5,"status":"Closed"},{"month":"2024-12-01T00:00:00","a3":"Chak Angrae Kraom","count":8,"status":"Closed"},{"month":"2024-12-01T00:00:00","a3":"Stueng Mean Chey 1","count":15,"status":"Closed"},{"month":"2024-12-01T00:00:00","a3":"Stueng Mean Chey 2","count":14,"status":"Closed"},{"month":"2024-12-01T00:00:00","a3":"Stueng Mean Chey 3","count":29,"status":"Closed"},{"month":"2024-12-01T00:00:00","a3":"Boeng Tumpun 1","count":13,"status":"Closed"},{"month":"2024-12-01T00:00:00","a3":"Boeng Tumpun 2","count":13,"status":"Closed"},{"month":"2025-01-01T00:00:00","a3":"Chak Angrae Leu","count":2,"status":"Closed"},{"month":"2025-01-01T00:00:00","a3":"Chak Angrae Kraom","count":7,"status":"Closed"},{"month":"2025-01-01T00:00:00","a3":"Stueng Mean Chey 1","count":21,"status":"Closed"},{"month":"2025-01-01T00:00:00","a3":"Stueng Mean Chey 2","count":20,"status":"Closed"},{"month":"2025-01-01T00:00:00","a3":"Stueng Mean Chey 3","count":27,"status":"Closed"},{"month":"2025-01-01T00:00:00","a3":"Boeng Tumpun 1","count":24,"status":"Closed"},{"month":"2025-01-01T00:00:00","a3":"Boeng Tumpun 2","count":12,"status":"Closed"},{"month":"2025-02-01T00:00:00","a3":"Chak Angrae Leu","count":8,"status":"Closed"},{"month":"2025-02-01T00:00:00","a3":"Chak Angrae Kraom","count":7,"status":"Closed"},{"month":"2025-02-01T00:00:00","a3":"Stueng Mean Chey 1","count":16,"status":"Closed"},{"month":"2025-02-01T00:00:00","a3":"Stueng Mean Chey 2","count":16,"status":"Closed"},{"month":"2025-02-01T00:00:00","a3":"Stueng Mean Chey 3","count":27,"status":"Closed"},{"month":"2025-02-01T00:00:00","a3":"Boeng Tumpun 1","count":7,"status":"Closed"},{"month":"2025-02-01T00:00:00","a3":"Boeng Tumpun 2","count":10,"status":"Closed"},{"month":"2025-03-01T00:00:00","a3":"Chak Angrae Leu","count":4,"status":"Closed"},{"month":"2025-03-01T00:00:00","a3":"Chak Angrae Kraom","count":10,"status":"Closed"},{"month":"2025-03-01T00:00:00","a3":"Stueng Mean Chey 1","count":10,"status":"Closed"},{"month":"2025-03-01T00:00:00","a3":"Stueng Mean Chey 2","count":12,"status":"Closed"},{"month":"2025-03-01T00:00:00","a3":"Stueng Mean Chey 3","count":24,"status":"Closed"},{"month":"2025-03-01T00:00:00","a3":"Boeng Tumpun 1","count":16,"status":"Closed"},{"month":"2025-03-01T00:00:00","a3":"Boeng Tumpun 2","count":10,"status":"Closed"}];
+    
+    const dataset2 = [{"a3":"Chak Angrae Leu","year":1979,"est_count":2},{"a3":"Chak Angrae Leu","year":1980,"est_count":2},{"a3":"Chak Angrae Leu","year":1984,"est_count":1},{"a3":"Chak Angrae Leu","year":1987,"est_count":1},{"a3":"Chak Angrae Leu","year":1988,"est_count":1},{"a3":"Chak Angrae Leu","year":1990,"est_count":4},{"a3":"Chak Angrae Leu","year":1993,"est_count":2},{"a3":"Chak Angrae Leu","year":1994,"est_count":1},{"a3":"Chak Angrae Leu","year":1995,"est_count":10},{"a3":"Chak Angrae Leu","year":1996,"est_count":4},{"a3":"Chak Angrae Leu","year":1997,"est_count":3},{"a3":"Chak Angrae Leu","year":1998,"est_count":4},{"a3":"Chak Angrae Leu","year":1999,"est_count":3},{"a3":"Chak Angrae Leu","year":2000,"est_count":19},{"a3":"Chak Angrae Leu","year":2002,"est_count":1},{"a3":"Chak Angrae Leu","year":2003,"est_count":5},{"a3":"Chak Angrae Leu","year":2004,"est_count":3},{"a3":"Chak Angrae Leu","year":2005,"est_count":25},{"a3":"Chak Angrae Leu","year":2006,"est_count":3},{"a3":"Chak Angrae Leu","year":2007,"est_count":6},{"a3":"Chak Angrae Leu","year":2008,"est_count":9},{"a3":"Chak Angrae Leu","year":2009,"est_count":8},{"a3":"Chak Angrae Leu","year":2010,"est_count":28},{"a3":"Chak Angrae Leu","year":2011,"est_count":6},{"a3":"Chak Angrae Leu","year":2012,"est_count":15},{"a3":"Chak Angrae Leu","year":2013,"est_count":19},{"a3":"Chak Angrae Leu","year":2014,"est_count":24},{"a3":"Chak Angrae Leu","year":2015,"est_count":84},{"a3":"Chak Angrae Leu","year":2016,"est_count":31},{"a3":"Chak Angrae Leu","year":2017,"est_count":46},{"a3":"Chak Angrae Leu","year":2018,"est_count":45},{"a3":"Chak Angrae Leu","year":2019,"est_count":96},{"a3":"Chak Angrae Leu","year":2020,"est_count":94},{"a3":"Chak Angrae Leu","year":2021,"est_count":71},{"a3":"Chak Angrae Leu","year":2022,"est_count":112},{"a3":"Chak Angrae Leu","year":2023,"est_count":182},{"a3":"Chak Angrae Leu","year":2024,"est_count":149},{"a3":"Chak Angrae Leu","year":2025,"est_count":108},{"a3":"Chak Angrae Kraom","year":1984,"est_count":1},{"a3":"Chak Angrae Kraom","year":1985,"est_count":2},{"a3":"Chak Angrae Kraom","year":1987,"est_count":1},{"a3":"Chak Angrae Kraom","year":1988,"est_count":2},{"a3":"Chak Angrae Kraom","year":1989,"est_count":1},{"a3":"Chak Angrae Kraom","year":1990,"est_count":1},{"a3":"Chak Angrae Kraom","year":1992,"est_count":2},{"a3":"Chak Angrae Kraom","year":1993,"est_count":3},{"a3":"Chak Angrae Kraom","year":1994,"est_count":1},{"a3":"Chak Angrae Kraom","year":1995,"est_count":5},{"a3":"Chak Angrae Kraom","year":1996,"est_count":1},{"a3":"Chak Angrae Kraom","year":1997,"est_count":2},{"a3":"Chak Angrae Kraom","year":1998,"est_count":1},{"a3":"Chak Angrae Kraom","year":1999,"est_count":2},{"a3":"Chak Angrae Kraom","year":2000,"est_count":13},{"a3":"Chak Angrae Kraom","year":2001,"est_count":5},{"a3":"Chak Angrae Kraom","year":2002,"est_count":7},{"a3":"Chak Angrae Kraom","year":2003,"est_count":5},{"a3":"Chak Angrae Kraom","year":2004,"est_count":9},{"a3":"Chak Angrae Kraom","year":2005,"est_count":20},{"a3":"Chak Angrae Kraom","year":2006,"est_count":3},{"a3":"Chak Angrae Kraom","year":2007,"est_count":12},{"a3":"Chak Angrae Kraom","year":2008,"est_count":10},{"a3":"Chak Angrae Kraom","year":2009,"est_count":5},{"a3":"Chak Angrae Kraom","year":2010,"est_count":25},{"a3":"Chak Angrae Kraom","year":2011,"est_count":12},{"a3":"Chak Angrae Kraom","year":2012,"est_count":16},{"a3":"Chak Angrae Kraom","year":2013,"est_count":30},{"a3":"Chak Angrae Kraom","year":2014,"est_count":36},{"a3":"Chak Angrae Kraom","year":2015,"est_count":75},{"a3":"Chak Angrae Kraom","year":2016,"est_count":43},{"a3":"Chak Angrae Kraom","year":2017,"est_count":53},{"a3":"Chak Angrae Kraom","year":2018,"est_count":82},{"a3":"Chak Angrae Kraom","year":2019,"est_count":81},{"a3":"Chak Angrae Kraom","year":2020,"est_count":116},{"a3":"Chak Angrae Kraom","year":2021,"est_count":88},{"a3":"Chak Angrae Kraom","year":2022,"est_count":164},{"a3":"Chak Angrae Kraom","year":2023,"est_count":204},{"a3":"Chak Angrae Kraom","year":2024,"est_count":167},{"a3":"Chak Angrae Kraom","year":2025,"est_count":155},{"a3":"Stueng Mean Chey 1","year":1978,"est_count":1},{"a3":"Stueng Mean Chey 1","year":1984,"est_count":1},{"a3":"Stueng Mean Chey 1","year":1989,"est_count":1},{"a3":"Stueng Mean Chey 1","year":1990,"est_count":1},{"a3":"Stueng Mean Chey 1","year":1991,"est_count":1},{"a3":"Stueng Mean Chey 1","year":1994,"est_count":1},{"a3":"Stueng Mean Chey 1","year":1995,"est_count":3},{"a3":"Stueng Mean Chey 1","year":1996,"est_count":3},{"a3":"Stueng Mean Chey 1","year":1997,"est_count":1},{"a3":"Stueng Mean Chey 1","year":1998,"est_count":3},{"a3":"Stueng Mean Chey 1","year":2000,"est_count":23},{"a3":"Stueng Mean Chey 1","year":2001,"est_count":2},{"a3":"Stueng Mean Chey 1","year":2002,"est_count":7},{"a3":"Stueng Mean Chey 1","year":2003,"est_count":6},{"a3":"Stueng Mean Chey 1","year":2004,"est_count":7},{"a3":"Stueng Mean Chey 1","year":2005,"est_count":58},{"a3":"Stueng Mean Chey 1","year":2006,"est_count":5},{"a3":"Stueng Mean Chey 1","year":2007,"est_count":14},{"a3":"Stueng Mean Chey 1","year":2008,"est_count":11},{"a3":"Stueng Mean Chey 1","year":2009,"est_count":9},{"a3":"Stueng Mean Chey 1","year":2010,"est_count":55},{"a3":"Stueng Mean Chey 1","year":2011,"est_count":8},{"a3":"Stueng Mean Chey 1","year":2012,"est_count":34},{"a3":"Stueng Mean Chey 1","year":2013,"est_count":41},{"a3":"Stueng Mean Chey 1","year":2014,"est_count":38},{"a3":"Stueng Mean Chey 1","year":2015,"est_count":159},{"a3":"Stueng Mean Chey 1","year":2016,"est_count":54},{"a3":"Stueng Mean Chey 1","year":2017,"est_count":81},{"a3":"Stueng Mean Chey 1","year":2018,"est_count":136},{"a3":"Stueng Mean Chey 1","year":2019,"est_count":152},{"a3":"Stueng Mean Chey 1","year":2020,"est_count":184},{"a3":"Stueng Mean Chey 1","year":2021,"est_count":138},{"a3":"Stueng Mean Chey 1","year":2022,"est_count":198},{"a3":"Stueng Mean Chey 1","year":2023,"est_count":293},{"a3":"Stueng Mean Chey 1","year":2024,"est_count":301},{"a3":"Stueng Mean Chey 1","year":2025,"est_count":274},{"a3":"Stueng Mean Chey 2","year":1980,"est_count":1},{"a3":"Stueng Mean Chey 2","year":1984,"est_count":1},{"a3":"Stueng Mean Chey 2","year":1989,"est_count":1},{"a3":"Stueng Mean Chey 2","year":1990,"est_count":3},{"a3":"Stueng Mean Chey 2","year":1991,"est_count":1},{"a3":"Stueng Mean Chey 2","year":1992,"est_count":1},{"a3":"Stueng Mean Chey 2","year":1995,"est_count":2},{"a3":"Stueng Mean Chey 2","year":1997,"est_count":1},{"a3":"Stueng Mean Chey 2","year":1998,"est_count":6},{"a3":"Stueng Mean Chey 2","year":1999,"est_count":4},{"a3":"Stueng Mean Chey 2","year":2000,"est_count":24},{"a3":"Stueng Mean Chey 2","year":2001,"est_count":4},{"a3":"Stueng Mean Chey 2","year":2002,"est_count":7},{"a3":"Stueng Mean Chey 2","year":2003,"est_count":14},{"a3":"Stueng Mean Chey 2","year":2004,"est_count":8},{"a3":"Stueng Mean Chey 2","year":2005,"est_count":39},{"a3":"Stueng Mean Chey 2","year":2006,"est_count":11},{"a3":"Stueng Mean Chey 2","year":2007,"est_count":10},{"a3":"Stueng Mean Chey 2","year":2008,"est_count":10},{"a3":"Stueng Mean Chey 2","year":2009,"est_count":15},{"a3":"Stueng Mean Chey 2","year":2010,"est_count":48},{"a3":"Stueng Mean Chey 2","year":2011,"est_count":22},{"a3":"Stueng Mean Chey 2","year":2012,"est_count":47},{"a3":"Stueng Mean Chey 2","year":2013,"est_count":48},{"a3":"Stueng Mean Chey 2","year":2014,"est_count":62},{"a3":"Stueng Mean Chey 2","year":2015,"est_count":179},{"a3":"Stueng Mean Chey 2","year":2016,"est_count":82},{"a3":"Stueng Mean Chey 2","year":2017,"est_count":123},{"a3":"Stueng Mean Chey 2","year":2018,"est_count":153},{"a3":"Stueng Mean Chey 2","year":2019,"est_count":167},{"a3":"Stueng Mean Chey 2","year":2020,"est_count":189},{"a3":"Stueng Mean Chey 2","year":2021,"est_count":179},{"a3":"Stueng Mean Chey 2","year":2022,"est_count":268},{"a3":"Stueng Mean Chey 2","year":2023,"est_count":405},{"a3":"Stueng Mean Chey 2","year":2024,"est_count":340},{"a3":"Stueng Mean Chey 2","year":2025,"est_count":280},{"a3":"Stueng Mean Chey 3","year":1986,"est_count":1},{"a3":"Stueng Mean Chey 3","year":1995,"est_count":2},{"a3":"Stueng Mean Chey 3","year":1996,"est_count":2},{"a3":"Stueng Mean Chey 3","year":1997,"est_count":2},{"a3":"Stueng Mean Chey 3","year":1998,"est_count":2},{"a3":"Stueng Mean Chey 3","year":1999,"est_count":2},{"a3":"Stueng Mean Chey 3","year":2000,"est_count":26},{"a3":"Stueng Mean Chey 3","year":2001,"est_count":3},{"a3":"Stueng Mean Chey 3","year":2002,"est_count":3},{"a3":"Stueng Mean Chey 3","year":2003,"est_count":6},{"a3":"Stueng Mean Chey 3","year":2004,"est_count":8},{"a3":"Stueng Mean Chey 3","year":2005,"est_count":63},{"a3":"Stueng Mean Chey 3","year":2006,"est_count":13},{"a3":"Stueng Mean Chey 3","year":2007,"est_count":16},{"a3":"Stueng Mean Chey 3","year":2008,"est_count":28},{"a3":"Stueng Mean Chey 3","year":2009,"est_count":15},{"a3":"Stueng Mean Chey 3","year":2010,"est_count":74},{"a3":"Stueng Mean Chey 3","year":2011,"est_count":39},{"a3":"Stueng Mean Chey 3","year":2012,"est_count":69},{"a3":"Stueng Mean Chey 3","year":2013,"est_count":78},{"a3":"Stueng Mean Chey 3","year":2014,"est_count":78},{"a3":"Stueng Mean Chey 3","year":2015,"est_count":205},{"a3":"Stueng Mean Chey 3","year":2016,"est_count":109},{"a3":"Stueng Mean Chey 3","year":2017,"est_count":165},{"a3":"Stueng Mean Chey 3","year":2018,"est_count":209},{"a3":"Stueng Mean Chey 3","year":2019,"est_count":206},{"a3":"Stueng Mean Chey 3","year":2020,"est_count":236},{"a3":"Stueng Mean Chey 3","year":2021,"est_count":224},{"a3":"Stueng Mean Chey 3","year":2022,"est_count":338},{"a3":"Stueng Mean Chey 3","year":2023,"est_count":465},{"a3":"Stueng Mean Chey 3","year":2024,"est_count":385},{"a3":"Stueng Mean Chey 3","year":2025,"est_count":303},{"a3":"Boeng Tumpun 1","year":1978,"est_count":1},{"a3":"Boeng Tumpun 1","year":1985,"est_count":1},{"a3":"Boeng Tumpun 1","year":1988,"est_count":1},{"a3":"Boeng Tumpun 1","year":1989,"est_count":1},{"a3":"Boeng Tumpun 1","year":1990,"est_count":1},{"a3":"Boeng Tumpun 1","year":1991,"est_count":1},{"a3":"Boeng Tumpun 1","year":1993,"est_count":4},{"a3":"Boeng Tumpun 1","year":1994,"est_count":1},{"a3":"Boeng Tumpun 1","year":1995,"est_count":5},{"a3":"Boeng Tumpun 1","year":1996,"est_count":1},{"a3":"Boeng Tumpun 1","year":1997,"est_count":9},{"a3":"Boeng Tumpun 1","year":1998,"est_count":3},{"a3":"Boeng Tumpun 1","year":1999,"est_count":7},{"a3":"Boeng Tumpun 1","year":2000,"est_count":8},{"a3":"Boeng Tumpun 1","year":2001,"est_count":2},{"a3":"Boeng Tumpun 1","year":2002,"est_count":1},{"a3":"Boeng Tumpun 1","year":2003,"est_count":5},{"a3":"Boeng Tumpun 1","year":2004,"est_count":4},{"a3":"Boeng Tumpun 1","year":2005,"est_count":24},{"a3":"Boeng Tumpun 1","year":2006,"est_count":6},{"a3":"Boeng Tumpun 1","year":2007,"est_count":6},{"a3":"Boeng Tumpun 1","year":2008,"est_count":11},{"a3":"Boeng Tumpun 1","year":2009,"est_count":5},{"a3":"Boeng Tumpun 1","year":2010,"est_count":30},{"a3":"Boeng Tumpun 1","year":2011,"est_count":12},{"a3":"Boeng Tumpun 1","year":2012,"est_count":43},{"a3":"Boeng Tumpun 1","year":2013,"est_count":28},{"a3":"Boeng Tumpun 1","year":2014,"est_count":45},{"a3":"Boeng Tumpun 1","year":2015,"est_count":126},{"a3":"Boeng Tumpun 1","year":2016,"est_count":45},{"a3":"Boeng Tumpun 1","year":2017,"est_count":96},{"a3":"Boeng Tumpun 1","year":2018,"est_count":101},{"a3":"Boeng Tumpun 1","year":2019,"est_count":102},{"a3":"Boeng Tumpun 1","year":2020,"est_count":155},{"a3":"Boeng Tumpun 1","year":2021,"est_count":118},{"a3":"Boeng Tumpun 1","year":2022,"est_count":164},{"a3":"Boeng Tumpun 1","year":2023,"est_count":214},{"a3":"Boeng Tumpun 1","year":2024,"est_count":243},{"a3":"Boeng Tumpun 1","year":2025,"est_count":189},{"a3":"Boeng Tumpun 2","year":1984,"est_count":1},{"a3":"Boeng Tumpun 2","year":1985,"est_count":1},{"a3":"Boeng Tumpun 2","year":1987,"est_count":1},{"a3":"Boeng Tumpun 2","year":1988,"est_count":1},{"a3":"Boeng Tumpun 2","year":1989,"est_count":1},{"a3":"Boeng Tumpun 2","year":1990,"est_count":1},{"a3":"Boeng Tumpun 2","year":1991,"est_count":1},{"a3":"Boeng Tumpun 2","year":1992,"est_count":2},{"a3":"Boeng Tumpun 2","year":1993,"est_count":1},{"a3":"Boeng Tumpun 2","year":1994,"est_count":1},{"a3":"Boeng Tumpun 2","year":1996,"est_count":2},{"a3":"Boeng Tumpun 2","year":1997,"est_count":2},{"a3":"Boeng Tumpun 2","year":1999,"est_count":1},{"a3":"Boeng Tumpun 2","year":2000,"est_count":15},{"a3":"Boeng Tumpun 2","year":2001,"est_count":1},{"a3":"Boeng Tumpun 2","year":2002,"est_count":2},{"a3":"Boeng Tumpun 2","year":2003,"est_count":4},{"a3":"Boeng Tumpun 2","year":2004,"est_count":5},{"a3":"Boeng Tumpun 2","year":2005,"est_count":23},{"a3":"Boeng Tumpun 2","year":2006,"est_count":6},{"a3":"Boeng Tumpun 2","year":2007,"est_count":8},{"a3":"Boeng Tumpun 2","year":2008,"est_count":7},{"a3":"Boeng Tumpun 2","year":2009,"est_count":7},{"a3":"Boeng Tumpun 2","year":2010,"est_count":26},{"a3":"Boeng Tumpun 2","year":2011,"est_count":16},{"a3":"Boeng Tumpun 2","year":2012,"est_count":18},{"a3":"Boeng Tumpun 2","year":2013,"est_count":30},{"a3":"Boeng Tumpun 2","year":2014,"est_count":40},{"a3":"Boeng Tumpun 2","year":2015,"est_count":110},{"a3":"Boeng Tumpun 2","year":2016,"est_count":50},{"a3":"Boeng Tumpun 2","year":2017,"est_count":78},{"a3":"Boeng Tumpun 2","year":2018,"est_count":118},{"a3":"Boeng Tumpun 2","year":2019,"est_count":120},{"a3":"Boeng Tumpun 2","year":2020,"est_count":136},{"a3":"Boeng Tumpun 2","year":2021,"est_count":105},{"a3":"Boeng Tumpun 2","year":2022,"est_count":173},{"a3":"Boeng Tumpun 2","year":2023,"est_count":238},{"a3":"Boeng Tumpun 2","year":2024,"est_count":239},{"a3":"Boeng Tumpun 2","year":2025,"est_count":154}];
+    
     // Define the GeoJSON data for the districts
     const districtsGeoJSON = {
       "type": "FeatureCollection",
@@ -161,65 +178,73 @@
 
     const initMap = () => {
       // Initialize map centered on Phnom Penh
-      const map = L.map('leaflet-map').setView([11.5465, 104.8925], 14);
-      
+      const map = L.map('leaflet-map').setView([11.5239, 104.9008], 13);
+
       // Add base tile layer
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
 
-      // Define a color scale for the districts
-      const getColor = (name) => {
-        const colors = [
-          '#3366cc', '#dc3912', '#ff9900', '#109618', 
-          '#990099', '#0099c6', '#dd4477', '#66aa00'
-        ];
-        const index = districtsGeoJSON.features.findIndex(f => f.properties.name === name) % colors.length;
-        return colors[index];
+      // Function to get color based on value
+      const getColorByValue = (value, datasetType) => {
+        if (datasetType === 'dataset1') {
+          // Color scale for business status counts
+          if (value >= 20) return '#800026';
+          else if (value >= 15) return '#BD0026';
+          else if (value >= 10) return '#E31A1C';
+          else if (value >= 5) return '#FC4E2A';
+          else return '#FD8D3C';
+        } else {
+          // Color scale for establishment counts
+          if (value >= 15) return '#253494';
+          else if (value >= 10) return '#2C7FB8';
+          else if (value >= 5) return '#41B6C4';
+          else if (value >= 1) return '#7FCDBB';
+          else return '#FFFFCC';
+        }
+      };
+
+      // Function to get district data
+      const getDistrictData = (districtName, datasetType, timeIndex) => {
+        if (datasetType === 'dataset1') {
+          // For dataset1, filter by month
+          const month = months[timeIndex];
+          const districtData = dataset1.find(item => item.a3 === districtName && item.month.startsWith(month.split(' ')[1] + '-' + (months.indexOf(month)+1).toString().padStart(2, '0')));
+          return {
+            value: districtData ? districtData.count : 0,
+            status: districtData ? districtData.status : 'No data'
+          };
+        } else {
+          // For dataset2, filter by year and sum establishment counts up to that year
+          const year = years[timeIndex];
+          const districtEntries = dataset2.filter(item => item.a3 === districtName && item.year <= year);
+          const totalEst = districtEntries.reduce((sum, item) => sum + item.est_count, 0);
+          return {
+            value: totalEst,
+            status: districtEntries.length > 0 ? 
+              `Established between ${districtEntries[0].year} and ${districtEntries[districtEntries.length-1].year}` : 
+              'No data'
+          };
+        }
       };
 
       // Style function for the districts
-      const style = (feature) => {
+      const style = (feature, datasetType, timeIndex) => {
+        const districtData = getDistrictData(feature.properties.name, datasetType, timeIndex);
         return {
-          fillColor: getColor(feature.properties.name),
+          fillColor: getColorByValue(districtData.value, datasetType),
           weight: 2,
           opacity: 1,
           color: 'white',
           dashArray: '3',
-          fillOpacity: 0.5
+          fillOpacity: 0.7
         };
       };
 
-      // Highlight feature on hover
-      const highlightFeature = (e) => {
-        const layer = e.target;
-        layer.setStyle({
-          weight: 3,
-          color: '#666',
-          dashArray: '',
-          fillOpacity: 0.7
-        });
-        layer.bringToFront();
-        
-        // Show district name in modal
-        document.getElementById('modal-value').textContent = 
-          `District: ${layer.feature.properties.name}`;
-        document.getElementById('map-modal').classList.remove('hidden');
-      };
-
-      // Reset highlight on mouseout
-      const resetHighlight = (e) => {
-        geoJsonLayer.resetStyle(e.target);
-        document.getElementById('map-modal').classList.add('hidden');
-      };
-
-      // Zoom to feature on click
-      const zoomToFeature = (e) => {
-        map.fitBounds(e.target.getBounds());
-      };
-
       // Bind events to each feature
-      const onEachFeature = (feature, layer) => {
+      const onEachFeature = (feature, layer, datasetType, timeIndex) => {
+        const districtData = getDistrictData(feature.properties.name, datasetType, timeIndex);
+        
         layer.on({
           click: (e) => {
             const layer = e.target;
@@ -230,46 +255,160 @@
               weight: 3,
               color: '#666',
               dashArray: '',
-              fillOpacity: 0.7
+              fillOpacity: 0.9
             });
             layer.bringToFront();
 
-            // Show modal with district name
-            document.getElementById('modal-value').textContent =
-              `District: ${layer.feature.properties.name}`;
+            // Show modal with district data
+            document.getElementById('modal-district').textContent = `District: ${layer.feature.properties.name}`;
+            document.getElementById('modal-value').textContent = 
+              datasetType === 'dataset1' 
+                ? `Businesses: ${districtData.value}` 
+                : `Establishments: ${districtData.value}`;
+            document.getElementById('modal-status').textContent = `Status: ${districtData.status}`;
             document.getElementById('map-modal').classList.remove('hidden');
+          },
+          mouseover: (e) => {
+            const layer = e.target;
+            layer.setStyle({
+              weight: 3,
+              color: '#666',
+              dashArray: '',
+              fillOpacity: 0.9
+            });
+            layer.bringToFront();
+          },
+          mouseout: (e) => {
+            geoJsonLayer.resetStyle(e.target);
           }
         });
-      };
 
+        // Bind tooltip
+        layer.bindTooltip(
+          `<b>${feature.properties.name}</b><br/>${
+            datasetType === 'dataset1' 
+              ? `Businesses: ${districtData.value}<br/>Status: ${districtData.status}` 
+              : `Establishments: ${districtData.value}`
+          }`, 
+          { 
+            direction: 'top',
+            sticky: true,
+            className: 'custom-tooltip'
+          }
+        );
+      };
 
       // Add the GeoJSON layer to the map
-      const geoJsonLayer = L.geoJSON(districtsGeoJSON, {
-        style: style,
-        onEachFeature: onEachFeature
-      }).addTo(map);
+      let geoJsonLayer;
+      let currentDataset = 'dataset1';
+      let currentTimeIndex = 0;
 
-      // Add legend
-      const legend = L.control({position: 'bottomright'});
-      legend.onAdd = function(map) {
-        const div = L.DomUtil.create('div', 'info legend bg-white p-2 rounded shadow');
-        const districts = districtsGeoJSON.features;
+      // Time periods for each dataset
+      const months = [
+        'January 2025', 'February 2025', 'March 2025', 'April 2025',
+        'May 2025', 'June 2025', 'July 2025', 'August 2025',
+        'September 2025', 'October 2025', 'November 2025', 'December 2025'
+      ];
+      
+      // Extract unique years from dataset2 and sort them
+      const years = [...new Set(dataset2.map(item => item.year))].sort((a, b) => a - b);
+      
+      const updateMapData = () => {
+        // Remove existing layer if it exists
+        if (geoJsonLayer) {
+          map.removeLayer(geoJsonLayer);
+        }
         
-        // Generate legend HTML
-        let labels = '<h4 class="text-sm font-bold mb-2">Districts</h4>';
-        districts.forEach(district => {
-          labels += `
-            <div class="flex items-center mb-1">
-              <i style="background:${getColor(district.properties.name)}; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i>
-              <span class="text-xs">${district.properties.name}</span>
-            </div>
-          `;
-        });
+        // Add new layer with current dataset and time period
+        geoJsonLayer = L.geoJSON(districtsGeoJSON, {
+          style: (feature) => style(feature, currentDataset, currentTimeIndex),
+          onEachFeature: (feature, layer) => onEachFeature(feature, layer, currentDataset, currentTimeIndex)
+        }).addTo(map);
         
-        div.innerHTML = labels;
-        return div;
+        // Update legend
+        updateLegend(currentDataset);
       };
-      legend.addTo(map);
+
+      // Update legend based on dataset
+      const updateLegend = (datasetType) => {
+        // Remove existing legend if it exists
+        const oldLegend = document.querySelector('.info.legend');
+        if (oldLegend) {
+          oldLegend.remove();
+        }
+
+        const legend = L.control({position: 'bottomright'});
+        
+        legend.onAdd = function(map) {
+          const div = L.DomUtil.create('div', 'info legend bg-white p-2 rounded shadow');
+          
+          if (datasetType === 'dataset1') {
+            // Legend for business status counts
+            const grades = [0, 5, 10, 15, 20];
+            const labels = ['<h4 class="text-sm font-bold mb-2">Business Count</h4>'];
+            
+            for (let i = 0; i < grades.length; i++) {
+              div.innerHTML +=
+                '<div class="flex items-center mb-1">' +
+                '<i style="background:' + getColorByValue(grades[i] + 1, datasetType) + 
+                '; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i> ' +
+                grades[i] + (grades[i + 1] ? '–' + grades[i + 1] + '</div>' : '+</div>');
+            }
+          } else {
+            // Legend for establishment counts
+            const grades = [0, 1, 5, 10, 15];
+            const labels = ['<h4 class="text-sm font-bold mb-2">Establishment Count</h4>'];
+            
+            for (let i = 0; i < grades.length; i++) {
+              div.innerHTML +=
+                '<div class="flex items-center mb-1">' +
+                '<i style="background:' + getColorByValue(grades[i] + 1, datasetType) + 
+                '; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i> ' +
+                grades[i] + (grades[i + 1] ? '–' + grades[i + 1] + '</div>' : '+</div>');
+            }
+          }
+          
+          return div;
+        };
+        
+        legend.addTo(map);
+      };
+
+      // Initialize with dataset1
+      updateMapData();
+
+      // Get DOM elements
+      const datasetSelector = document.getElementById('dataset-selector');
+      const timeSlider = document.getElementById('time-slider');
+      const timeLabel = document.getElementById('time-label');
+      const timePeriodLabel = document.getElementById('time-period-label');
+      const playButton = document.getElementById('play-button');
+      const stopButton = document.getElementById('stop-button');
+
+      // Update time slider based on dataset selection
+      const updateTimeSlider = () => {
+        if (currentDataset === 'dataset1') {
+          timeSlider.min = 0;
+          timeSlider.max = months.length - 1;
+          timeSlider.value = 0;
+          timeLabel.textContent = months[0];
+          timePeriodLabel.textContent = 'Month:';
+        } else {
+          timeSlider.min = 0;
+          timeSlider.max = years.length - 1;
+          timeSlider.value = years.length - 1; // Default to most recent year
+          timeLabel.textContent = years[years.length - 1];
+          timePeriodLabel.textContent = 'Year:';
+        }
+        currentTimeIndex = parseInt(timeSlider.value);
+        updateMapData();
+      };
+
+      // Dataset selector change handler
+      datasetSelector.addEventListener('change', function() {
+        currentDataset = this.value;
+        updateTimeSlider();
+      });
 
       // Close modal when clicking the close button
       document.querySelector('.close-button').addEventListener('click', () => {
@@ -277,17 +416,6 @@
       });
 
       // Play/stop button functionality for map
-      const playButton = document.getElementById('play-button');
-      const stopButton = document.getElementById('stop-button');
-      const monthSlider = document.getElementById('month-slider');
-      const monthLabel = document.getElementById('month-label');
-
-      const months = [
-        'January 2023', 'February 2023', 'March 2023', 'April 2023',
-        'May 2023', 'June 2023', 'July 2023', 'August 2023',
-        'September 2023', 'October 2023', 'November 2023', 'December 2023'
-      ];
-
       let animationInterval;
 
       playButton.addEventListener('click', function () {
@@ -299,10 +427,11 @@
         stopButton.classList.add('bg-red-500', 'hover:bg-red-600');
 
         animationInterval = setInterval(function () {
-          let nextMonth = parseInt(monthSlider.value) + 1;
-          if (nextMonth > 11) nextMonth = 0;
-          monthSlider.value = nextMonth;
-          updateMonth();
+          let nextIndex = parseInt(timeSlider.value) + 1;
+          const maxIndex = currentDataset === 'dataset1' ? months.length - 1 : years.length - 1;
+          if (nextIndex > maxIndex) nextIndex = 0;
+          timeSlider.value = nextIndex;
+          updateTimePeriod();
         }, 1000);
       });
 
@@ -316,25 +445,20 @@
         clearInterval(animationInterval);
       });
 
-      monthSlider.addEventListener('input', updateMonth);
+      timeSlider.addEventListener('input', updateTimePeriod);
 
-      function updateMonth() {
-        const monthIndex = parseInt(monthSlider.value);
-        monthLabel.textContent = months[monthIndex];
-
-        // Update polygon styles based on month (simulating seasonal changes)
-        geoJsonLayer.eachLayer(layer => {
-          // Adjust opacity to simulate activity changes
-          const opacity = 0.3 + (monthIndex * 0.05);
-          // Adjust hue for color variation
-          const hue = 200 + (monthIndex * 10);
-          layer.setStyle({
-            fillOpacity: Math.min(opacity, 0.8),
-            color: `hsl(${hue}, 80%, 50%)`,
-            fillColor: `hsl(${hue}, 80%, 50%)`
-          });
-        });
+      function updateTimePeriod() {
+        currentTimeIndex = parseInt(timeSlider.value);
+        if (currentDataset === 'dataset1') {
+          timeLabel.textContent = months[currentTimeIndex];
+        } else {
+          timeLabel.textContent = years[currentTimeIndex];
+        }
+        updateMapData();
       }
+
+      // Initialize the time slider
+      updateTimeSlider();
 
       // Handle map resize on container change
       const mapContainer = document.getElementById('leaflet-map');
