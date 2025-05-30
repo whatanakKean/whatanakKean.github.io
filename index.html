@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Assessing MSME Market Dynamics and Resilience in Phnom Penh</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -16,10 +16,11 @@
 
 <body class="bg-gray-50 font-roboto text-gray-800 leading-relaxed overflow-x-hidden scroll-smooth bg-[#336666]">
   <!-- Header -->
-  <header class="fixed top-0 left-0 w-full bg-[#336666] z-[1000] flex items-center justify-between px-4 py-4 shadow-md">
+  <header
+    class="fixed top-0 left-0 w-full bg-[#336666] z-[1000] flex items-center justify-between px-4 py-4 shadow-md">
     <div class="flex items-center gap-4">
       <div class="w-[100px] md:w-[120px]">
-        <img src="https://cdri.org.kh/storage/images/CDRI%20Logo_1704186788.png" alt="CDRI Logo" class="w-full h-auto">
+        <img src="https://cdri.org.kh/storage/images/CDRI%20Logo_1704186788.png" alt="CDRI Logo" class="w-full h-auto" />
       </div>
     </div>
     <h2 class="text-white text-xs sm:text-sm md:text-lg font-bold text-right flex-1 leading-snug md:leading-tight">
@@ -28,79 +29,59 @@
   </header>
 
   <!-- Section Map -->
-    <section id="sectionMap" class="min-h-screen w-full relative px-4 pt-24 pb-20 bg-[#336666]">
-    <div class="mx-auto max-w-screen-xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        
-        <!-- Left Side -->
-        <div class="bg-white p-4 rounded-lg shadow-md h-full">
-            <!-- Add content later -->
-            <div id="chart1" style="width: 100%; height: 70%; min-height: 300px;"></div>
-            <p class="mt-6 p-4 text-justify text-gray-700 text-base leading-relaxed">
-                អត្រាប្រតិបត្តិការអាជីវកម្ម៖ ចន្លោះខែមេសា ឆ្នាំ២០២៤ ដល់ខែមីនា ឆ្នាំ២០២៥ ខណ្ឌមានជ័យបានកត់ត្រាការបើកអាជីវកម្មថ្មីចំនួន១៧៩០ និងបិទចំនួន១.១៤២ ។ ខណៈពេលដែលចំនួនសរុបនៃអាជីវកម្មសកម្មនៅតែមានកម្រិតខ្ពស់ (អាជីវកម្មប្រតិបត្តិការចំនួនជិត១៥០០០)។ អត្រានៃការបិទនេះបង្ហាញពីភាពងាយរងគ្រោះនៅក្នុងប្រព័ន្ធអេកូឡូស៊ី MSME នៅមួយឆ្នាំចុងក្រោយ។
-            </p>
-            <div class="text-center text-sm text-gray-500 mt-4 font-roboto">
-                Data source: Cambodia Development Resource Institute
+  <section id="sectionMap" class="min-h-screen w-full relative px-4 pt-24 pb-20 bg-[#336666]">
+    <div class="bg-white rounded-lg shadow-md overflow-visible">
+      <div id="leaflet-map" class="w-full h-[75vh] min-h-[300px] p-2 my-4 border border-gray-200 rounded-lg"></div>
+
+      <!-- Controls -->
+      <div class="p-4 border-t border-gray-100">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+          <!-- Play/Stop Buttons -->
+          <div class="flex gap-2">
+            <button id="play-button"
+              class="px-4 py-2 text-white rounded-lg font-medium transition-all flex items-center text-sm md:text-base bg-[#336666] hover:bg-[#2b5555]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 sm:mr-2" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="hidden sm:inline">Play</span>
+            </button>
+
+            <button id="stop-button"
+              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all flex items-center text-sm md:text-base"
+              disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 sm:mr-2" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="hidden sm:inline">Stop</span>
+            </button>
+          </div>
+
+          <!-- Slider and Month -->
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto flex-wrap">
+            <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Time Period:</span>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+              <input type="range" id="month-slider" min="0" max="11" value="0"
+                class="w-full sm:flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
+
+              <span id="month-label"
+                class="text-sm font-medium text-gray-700 text-center sm:text-left px-2 sm:px-0">
+                January 2023
+              </span>
             </div>
-        </div>
-
-        <!-- Right Side: Map + Controls -->
-        <div class="bg-white rounded-lg shadow-md overflow-visible">
-            <div id="leaflet-map" 
-                class="w-full h-[75vh] min-h-[300px] p-2 my-4 border border-gray-200 rounded-lg"></div>
-            
-            <!-- Controls -->
-            <div class="p-4 border-t border-gray-100">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                
-                <!-- Play/Stop Buttons -->
-                <div class="flex gap-2">
-                <button id="play-button"
-                        class="px-4 py-2 text-white rounded-lg font-medium transition-all flex items-center text-sm md:text-base bg-[#336666] hover:bg-[#2b5555]">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 sm:mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="hidden sm:inline">Play</span>
-                </button>
-
-                <button id="stop-button"
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all flex items-center text-sm md:text-base"
-                        disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 sm:mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="hidden sm:inline">Stop</span>
-                </button>
-                </div>
-
-                <!-- Slider and Month -->
-                <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto flex-wrap">
-                <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Time Period:</span>
-
-                <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-                    <input type="range" id="month-slider" min="0" max="11" value="0"
-                        class="w-full sm:flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-
-                    <span id="month-label"
-                        class="text-sm font-medium text-gray-700 text-center sm:text-left px-2 sm:px-0">
-                    January 2023
-                    </span>
-                </div>
-                </div>
-
-
-            </div>
-            </div>
-        </div>
+          </div>
 
         </div>
+      </div>
     </div>
-    </section>
-
+  </section>
 
   <!-- Modal -->
   <div id="map-modal"
@@ -112,214 +93,188 @@
       <h3 class="text-lg font-bold mb-2">Business Information</h3>
       <p id="modal-value" class="text-gray-600"></p>
     </div>
-  </div>
-
-    <script>
-        const rawData = [
-        {
-            "month": "2024-04-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 42,
-            "pct_change": NaN
-        },
-        {
-            "month": "2024-05-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 40,
-            "pct_change": -4.761904761904762
-        },
-        {
-            "month": "2024-06-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 64,
-            "pct_change": 60.0
-        },
-        {
-            "month": "2024-07-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 36,
-            "pct_change": -43.75
-        },
-        {
-            "month": "2024-08-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 44,
-            "pct_change": 22.22222222222222
-        },
-        {
-            "month": "2024-09-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 62,
-            "pct_change": 40.90909090909091
-        },
-        {
-            "month": "2024-10-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 79,
-            "pct_change": 27.41935483870968
-        },
-        {
-            "month": "2024-11-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 71,
-            "pct_change": -10.12658227848101
-        },
-        {
-            "month": "2024-12-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 97,
-            "pct_change": 36.61971830985916
-        },
-        {
-            "month": "2025-01-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 113,
-            "pct_change": 16.49484536082474
-        },
-        {
-            "month": "2025-02-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 91,
-            "pct_change": -19.46902654867257
-        },
-        {
-            "month": "2025-03-01T00:00:00",
-            "type": "Closed Establishments",
-            "count": 86,
-            "pct_change": -5.494505494505495
-        },
-        {
-            "month": "2024-04-01T00:00:00",
-            "type": "New Establishments",
-            "count": 118,
-            "pct_change": NaN
-        },
-        {
-            "month": "2024-05-01T00:00:00",
-            "type": "New Establishments",
-            "count": 79,
-            "pct_change": -33.05084745762712
-        },
-        {
-            "month": "2024-06-01T00:00:00",
-            "type": "New Establishments",
-            "count": 97,
-            "pct_change": 22.78481012658228
-        },
-        {
-            "month": "2024-07-01T00:00:00",
-            "type": "New Establishments",
-            "count": 82,
-            "pct_change": -15.4639175257732
-        },
-        {
-            "month": "2024-08-01T00:00:00",
-            "type": "New Establishments",
-            "count": 95,
-            "pct_change": 15.85365853658537
-        },
-        {
-            "month": "2024-09-01T00:00:00",
-            "type": "New Establishments",
-            "count": 70,
-            "pct_change": -26.31578947368421
-        },
-        {
-            "month": "2024-10-01T00:00:00",
-            "type": "New Establishments",
-            "count": 130,
-            "pct_change": 85.71428571428571
-        },
-        {
-            "month": "2024-11-01T00:00:00",
-            "type": "New Establishments",
-            "count": 145,
-            "pct_change": 11.53846153846154
-        },
-        {
-            "month": "2024-12-01T00:00:00",
-            "type": "New Establishments",
-            "count": 147,
-            "pct_change": 1.379310344827586
-        },
-        {
-            "month": "2025-01-01T00:00:00",
-            "type": "New Establishments",
-            "count": 387,
-            "pct_change": 163.265306122449
-        },
-        {
-            "month": "2025-02-01T00:00:00",
-            "type": "New Establishments",
-            "count": 260,
-            "pct_change": -32.81653746770026
-        },
-        {
-            "month": "2025-03-01T00:00:00",
-            "type": "New Establishments",
-            "count": 180,
-            "pct_change": -30.76923076923077
-        }
-        ];
-
-    const months = [...new Set(rawData.map(item => item.month.slice(0, 7)))];
-    const types = [...new Set(rawData.map(item => item.type))];
-
-    const series = types.map(type => {
-        const data = months.map(month => {
-        const found = rawData.find(d => d.type === type && d.month.startsWith(month));
-        return found ? found.count : null;
-        });
-        return {
-        name: type,
-        type: 'line',
-        data: data
-        };
-    });
-
-    const option = {
-        title: {
-        text: 'Monthly trends of new and closed establishments',
-        top: 'top',
-        left: 'center'
-        },
-        tooltip: {
-        trigger: 'axis'
-        },
-        legend: {
-        data: types,
-        orient: 'horizontal',
-        bottom: 20
-        },
-        xAxis: {
-        type: 'category',
-        data: months
-        },
-        yAxis: {
-        type: 'value'
-        },
-        series: series,
-    };
-
-    const chartDom = document.getElementById('chart1');
-    const myChart = echarts.init(chartDom);
-    myChart.setOption(option);
-
-    // ✅ Make chart responsive
-    window.addEventListener('resize', () => {
-        myChart.resize();
-    });
-    </script>
-
-  
+  </div>  
 
   <script>
+    // Define the GeoJSON data for the districts
+    const districtsGeoJSON = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": { "name": "Chak Angrae Kraom" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[104.93811,11.517273],[104.935913,11.526917],[104.932129,11.531311],[104.927124,11.530273],[104.924927,11.527893],[104.921509,11.525696],[104.920288,11.520691],[104.916321,11.518677],[104.912903,11.519104],[104.913696,11.514709],[104.913696,11.510315],[104.93811,11.517273]]]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "name": "Chak Angrae Leu" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[104.913696,11.510315],[104.913879,11.505127],[104.912476,11.502319],[104.913696,11.482483],[104.921509,11.484497],[104.93573,11.489685],[104.947083,11.493713],[104.943726,11.499512],[104.942871,11.503113],[104.93811,11.517273],[104.913696,11.510315]]]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "name": "Stueng Mean Chey 1" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[104.898071,11.548096],[104.895508,11.5495],[104.890076,11.55011],[104.886902,11.548706],[104.8851808,11.5485108],[104.8852855,11.5477355],[104.8841965,11.5471495],[104.8835688,11.5468105],[104.8829251,11.5343644],[104.8852855,11.5346587],[104.898071,11.548096]]]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "name": "Stueng Mean Chey 2" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[104.8852855,11.5346587],[104.8858945,11.5344728],[104.8883085,11.5225203],[104.889099,11.522522],[104.893921,11.521912],[104.897705,11.522888],[104.897522,11.526306],[104.898499,11.533325],[104.898499,11.540283],[104.900696,11.544678],[104.898071,11.548096],[104.8852855,11.5346587]]]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "name": "Stueng Mean Chey 3" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[104.8851808,11.5485108],[104.8812486,11.5480728],[104.877319,11.547485],[104.872314,11.547302],[104.864075,11.545715],[104.860718,11.545471],[104.861694,11.541504],[104.862915,11.524719],[104.868713,11.522095],[104.872314,11.522095],[104.876892,11.520508],[104.882507,11.522095],[104.8883085,11.5225203],[104.8858945,11.5344728],[104.8852855,11.5346587],[104.8829251,11.5343644],[104.8835688,11.5468105],[104.8852855,11.5477355],[104.8851808,11.5485108]]]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "name": "Boeng Tumpun 1" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[104.897762,11.528044],[104.9113984,11.5273291],[104.915527,11.528931],[104.913879,11.533508],[104.911316,11.536499],[104.909302,11.54071],[104.905518,11.543518],[104.900696,11.544678],[104.898499,11.540283],[104.898499,11.533325],[104.897762,11.528044]]]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "name": "Boeng Tumpun 2" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[104.897705,11.522888],[104.9055436,11.5207378],[104.9108865,11.5194973],[104.912903,11.519104],[104.916321,11.518677],[104.920288,11.520691],[104.921509,11.525696],[104.918091,11.5271],[104.915527,11.528931],[104.9113984,11.5273291],[104.897762,11.528044],[104.897522,11.526306],[104.897705,11.522888]]]
+          }
+        }
+      ]
+    };
+
     const initMap = () => {
-      // Initialize map
-      const map2 = L.map('leaflet-map').setView([11.5465, 104.8925], 14);
+      // Initialize map centered on Phnom Penh
+      const map = L.map('leaflet-map').setView([11.5465, 104.8925], 14);
+      
+      // Add base tile layer
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map2);
+      }).addTo(map);
+
+      // Define a color scale for the districts
+      const getColor = (name) => {
+        const colors = [
+          '#3366cc', '#dc3912', '#ff9900', '#109618', 
+          '#990099', '#0099c6', '#dd4477', '#66aa00'
+        ];
+        const index = districtsGeoJSON.features.findIndex(f => f.properties.name === name) % colors.length;
+        return colors[index];
+      };
+
+      // Style function for the districts
+      const style = (feature) => {
+        return {
+          fillColor: getColor(feature.properties.name),
+          weight: 2,
+          opacity: 1,
+          color: 'white',
+          dashArray: '3',
+          fillOpacity: 0.5
+        };
+      };
+
+      // Highlight feature on hover
+      const highlightFeature = (e) => {
+        const layer = e.target;
+        layer.setStyle({
+          weight: 3,
+          color: '#666',
+          dashArray: '',
+          fillOpacity: 0.7
+        });
+        layer.bringToFront();
+        
+        // Show district name in modal
+        document.getElementById('modal-value').textContent = 
+          `District: ${layer.feature.properties.name}`;
+        document.getElementById('map-modal').classList.remove('hidden');
+      };
+
+      // Reset highlight on mouseout
+      const resetHighlight = (e) => {
+        geoJsonLayer.resetStyle(e.target);
+        document.getElementById('map-modal').classList.add('hidden');
+      };
+
+      // Zoom to feature on click
+      const zoomToFeature = (e) => {
+        map.fitBounds(e.target.getBounds());
+      };
+
+      // Bind events to each feature
+      const onEachFeature = (feature, layer) => {
+        layer.on({
+          click: (e) => {
+            const layer = e.target;
+
+            // Highlight the clicked feature
+            geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l)); // Reset others
+            layer.setStyle({
+              weight: 3,
+              color: '#666',
+              dashArray: '',
+              fillOpacity: 0.7
+            });
+            layer.bringToFront();
+
+            // Show modal with district name
+            document.getElementById('modal-value').textContent =
+              `District: ${layer.feature.properties.name}`;
+            document.getElementById('map-modal').classList.remove('hidden');
+          }
+        });
+      };
+
+
+      // Add the GeoJSON layer to the map
+      const geoJsonLayer = L.geoJSON(districtsGeoJSON, {
+        style: style,
+        onEachFeature: onEachFeature
+      }).addTo(map);
+
+      // Add legend
+      const legend = L.control({position: 'bottomright'});
+      legend.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'info legend bg-white p-2 rounded shadow');
+        const districts = districtsGeoJSON.features;
+        
+        // Generate legend HTML
+        let labels = '<h4 class="text-sm font-bold mb-2">Districts</h4>';
+        districts.forEach(district => {
+          labels += `
+            <div class="flex items-center mb-1">
+              <i style="background:${getColor(district.properties.name)}; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i>
+              <span class="text-xs">${district.properties.name}</span>
+            </div>
+          `;
+        });
+        
+        div.innerHTML = labels;
+        return div;
+      };
+      legend.addTo(map);
+
+      // Close modal when clicking the close button
+      document.querySelector('.close-button').addEventListener('click', () => {
+        document.getElementById('map-modal').classList.add('hidden');
+      });
 
       // Play/stop button functionality for map
       const playButton = document.getElementById('play-button');
@@ -338,7 +293,7 @@
       playButton.addEventListener('click', function () {
         playButton.disabled = true;
         stopButton.disabled = false;
-        playButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        playButton.classList.remove('bg-[#336666]', 'hover:bg-[#2b5555]');
         playButton.classList.add('bg-gray-400');
         stopButton.classList.remove('bg-gray-200');
         stopButton.classList.add('bg-red-500', 'hover:bg-red-600');
@@ -354,7 +309,7 @@
       stopButton.addEventListener('click', function () {
         playButton.disabled = false;
         stopButton.disabled = true;
-        playButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+        playButton.classList.add('bg-[#336666]', 'hover:bg-[#2b5555]');
         playButton.classList.remove('bg-gray-400');
         stopButton.classList.add('bg-gray-200');
         stopButton.classList.remove('bg-red-500', 'hover:bg-red-600');
@@ -368,12 +323,11 @@
         monthLabel.textContent = months[monthIndex];
 
         // Update polygon styles based on month (simulating seasonal changes)
-        Object.keys(sangkatLayers).forEach((sangkatName, index) => {
-          const layer = sangkatLayers[sangkatName];
+        geoJsonLayer.eachLayer(layer => {
           // Adjust opacity to simulate activity changes
           const opacity = 0.3 + (monthIndex * 0.05);
           // Adjust hue for color variation
-          const hue = 200 + (monthIndex * 10) + (index * 20); // Vary by sangkat
+          const hue = 200 + (monthIndex * 10);
           layer.setStyle({
             fillOpacity: Math.min(opacity, 0.8),
             color: `hsl(${hue}, 80%, 50%)`,
@@ -385,7 +339,7 @@
       // Handle map resize on container change
       const mapContainer = document.getElementById('leaflet-map');
       const resizeObserver = new ResizeObserver(() => {
-        map2.invalidateSize();
+        map.invalidateSize();
       });
       resizeObserver.observe(mapContainer);
     };
