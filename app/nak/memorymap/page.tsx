@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { useEffect, useRef, useState } from 'react';
-import Head from 'next/head';
-import 'leaflet/dist/leaflet.css';
-import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react'
+import Head from 'next/head'
+import 'leaflet/dist/leaflet.css'
+import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet to avoid SSR issues
-const LazyLeaflet = dynamic(() => import('leaflet'), { ssr: false });
+const LazyLeaflet = dynamic(() => import('leaflet'), { ssr: false })
 
 type Memory = {
-  title: string;
-  lat: number;
-  lng: number;
-  date: string;
-  images: string[];
-  description: string;
-};
+  title: string
+  lat: number
+  lng: number
+  date: string
+  images: string[]
+  description: string
+}
 
 const memories: Memory[] = [
   {
@@ -28,7 +28,7 @@ const memories: Memory[] = [
       'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=800',
     ],
     description:
-      "I remember how nervous I was that evening. When you walked in, the whole world seemed to fade away. We talked for hours about everything and nothing, and I knew right then that this was something special. The way your eyes lit up when you talked about your dreams made me fall for you even more.",
+      'I remember how nervous I was that evening. When you walked in, the whole world seemed to fade away. We talked for hours about everything and nothing, and I knew right then that this was something special. The way your eyes lit up when you talked about your dreams made me fall for you even more.',
   },
   {
     title: 'Romantic Dinner at Malis',
@@ -72,38 +72,38 @@ const memories: Memory[] = [
     description:
       "You looked so adorable trying to take the perfect photo for me. I was mesmerized by the palace, but even more by the way your face lit up explaining its history to me. When we got caught in that sudden downpour and ran laughing to take shelter, I knew these were the moments I'd cherish forever.",
   },
-];
+]
 
 export default function MemoryMapPage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const heartsContainerRef = useRef<HTMLDivElement | null>(null);
-  const [currentMemory, setCurrentMemory] = useState<Memory | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const mapRef = useRef<HTMLDivElement | null>(null)
+  const heartsContainerRef = useRef<HTMLDivElement | null>(null)
+  const [currentMemory, setCurrentMemory] = useState<Memory | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) return
 
     // Initialize map
     if (mapRef.current && typeof window !== 'undefined') {
-      const L = require('leaflet');
-      delete L.Icon.Default.prototype._getIconUrl;
+      const L = require('leaflet')
+      delete L.Icon.Default.prototype._getIconUrl
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
         iconUrl: require('leaflet/dist/images/marker-icon.png'),
         shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-      });
+      })
 
-      const map = L.map(mapRef.current).setView([11.5564, 104.9282], 14);
+      const map = L.map(mapRef.current).setView([11.5564, 104.9282], 14)
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      }).addTo(map)
 
       // Add markers
       memories.forEach((memory) => {
@@ -113,47 +113,47 @@ export default function MemoryMapPage() {
             html: '♥',
             iconSize: [36, 36],
           }),
-        }).addTo(map);
+        }).addTo(map)
 
         marker.on('click', () => {
-          setCurrentMemory(memory);
-          setIsModalOpen(true);
-        });
-      });
+          setCurrentMemory(memory)
+          setIsModalOpen(true)
+        })
+      })
 
       return () => {
-        map.remove();
-      };
+        map.remove()
+      }
     }
 
     // Create floating hearts
-    const heartsContainer = heartsContainerRef.current;
+    const heartsContainer = heartsContainerRef.current
     if (heartsContainer) {
       for (let i = 0; i < 25; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.innerHTML = '❤';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.animationDelay = Math.random() * 15 + 's';
-        heart.style.fontSize = Math.random() * 20 + 15 + 'px';
-        heartsContainer.appendChild(heart);
+        const heart = document.createElement('div')
+        heart.className = 'heart'
+        heart.innerHTML = '❤'
+        heart.style.left = Math.random() * 100 + 'vw'
+        heart.style.animationDelay = Math.random() * 15 + 's'
+        heart.style.fontSize = Math.random() * 20 + 15 + 'px'
+        heartsContainer.appendChild(heart)
       }
     }
-  }, [isClient]);
+  }, [isClient])
 
   // Close modal with ESC key
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) return
 
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsModalOpen(false);
+        setIsModalOpen(false)
       }
-    };
+    }
 
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [isClient]);
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [isClient])
 
   if (!isClient) {
     return (
@@ -204,7 +204,7 @@ export default function MemoryMapPage() {
           }
         `}</style>
       </div>
-    );
+    )
   }
 
   return (
@@ -324,7 +324,9 @@ export default function MemoryMapPage() {
           color: #490b3d;
           font-family: 'Dancing Script', cursive;
           font-size: 2.5rem;
-          text-shadow: 0 0 5px #e75488, 0 0 15px #e75488;
+          text-shadow:
+            0 0 5px #e75488,
+            0 0 15px #e75488;
           pointer-events: none;
           user-select: none;
           letter-spacing: 0.05em;
@@ -479,7 +481,8 @@ export default function MemoryMapPage() {
         }
 
         @keyframes heartbeat {
-          0%, 100% {
+          0%,
+          100% {
             transform: scale(1);
           }
           50% {
@@ -541,5 +544,5 @@ export default function MemoryMapPage() {
         }
       `}</style>
     </>
-  );
+  )
 }
