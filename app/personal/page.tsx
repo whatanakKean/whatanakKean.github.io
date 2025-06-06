@@ -146,7 +146,7 @@ export default function KawaiiPage() {
           <div className="floating relative mb-8 rounded-3xl border-4 border-pink-300 bg-white p-8 shadow-lg">
             <div className="absolute right-10 -bottom-6 h-0 w-0 border-t-[30px] border-r-[20px] border-l-[20px] border-t-pink-300 border-r-transparent border-l-transparent" />
             <h1 className="mb-2 text-4xl font-bold text-pink-600">
-              You&apos;re so <span className="text-pink-800">kawaii!</span>
+              I miss <span className="text-pink-800">you!</span>
             </h1>
             <p className="text-pink-500">〜(꒪꒳꒪)〜</p>
           </div>
@@ -193,7 +193,7 @@ export default function KawaiiPage() {
           >
             <span className="relative z-10 flex items-center">
               <i className="fas fa-heart mr-2" />
-              {quoteVisible ? 'Aishiteru!' : 'Click me, senpai!'}
+              {quoteVisible ? 'Hide Me' : 'Click me'}
             </span>
             <span className="absolute inset-0 bg-pink-400 opacity-0 transition-opacity duration-300 hover:opacity-30"></span>
           </button>
@@ -204,10 +204,8 @@ export default function KawaiiPage() {
               quoteVisible ? 'block opacity-100' : 'hidden opacity-0'
             }`}
           >
-            <p className="italic">
-              &quot;No matter how far apart we are, my heart will always find its way to you.&quot;
-            </p>
-            <p className="mt-2 text-sm text-pink-500">- Your personal anime love interest ♡</p>
+            <p className="italic">&quot;Srolanh Jae Leap Klang Klang.&quot;</p>
+            <p className="mt-2 text-sm text-pink-500">- Nak Nak ♡</p>
             <div className="mt-2 flex justify-center space-x-2 select-none">
               <span>(｡♥‿♥｡)</span>
             </div>
