@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const colors = ['#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb', '#1dd1a1']
-
 export default function KawaiiPage() {
   const heartsContainerRef = useRef<HTMLDivElement>(null)
   const [quoteVisible, setQuoteVisible] = useState(false)
+  const colors = ['#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb', '#1dd1a1']
 
   // Create floating hearts
   useEffect(() => {
@@ -15,7 +14,7 @@ export default function KawaiiPage() {
     const container = heartsContainerRef.current
     for (let i = 0; i < 20; i++) {
       const heart = document.createElement('div')
-      heart.className = 'floating-heart absolute text-pink-400'
+      heart.className = 'floating-heart text-pink-400 absolute'
       heart.innerHTML = '♥'
       heart.style.left = `${Math.random() * 100}vw`
       heart.style.top = `${Math.random() * 100}vh`
@@ -25,13 +24,13 @@ export default function KawaiiPage() {
 
       container.appendChild(heart)
     }
-  }, []) // colors is constant so no need to add here
+  }, [])
 
   // Create sparkle elements dynamically
   function createSparkles(count: number) {
     for (let i = 0; i < count; i++) {
       const sparkle = document.createElement('div')
-      sparkle.className = 'sparkle absolute pointer-events-none text-pink-400'
+      sparkle.className = 'sparkle text-pink-400 absolute pointer-events-none'
       sparkle.innerHTML = '✧'
       sparkle.style.left = `${Math.random() * 100}vw`
       sparkle.style.top = `${Math.random() * 100}vh`
@@ -57,7 +56,7 @@ export default function KawaiiPage() {
     function onMouseMove(e: MouseEvent) {
       if (Math.random() > 0.7) {
         const sparkle = document.createElement('div')
-        sparkle.className = 'sparkle absolute pointer-events-none text-pink-300'
+        sparkle.className = 'sparkle text-pink-300 absolute pointer-events-none'
         sparkle.innerHTML = '⋆'
         sparkle.style.left = `${e.pageX}px`
         sparkle.style.top = `${e.pageY}px`
@@ -135,59 +134,62 @@ export default function KawaiiPage() {
         <div ref={heartsContainerRef} />
 
         {/* Kawaii clouds */}
-        <div className="pointer-events-none absolute top-10 left-10 select-none text-4xl text-pink-300">
+        <div className="pointer-events-none absolute top-10 left-10 text-4xl text-pink-300 select-none">
           (´｡• ω •｡`)
         </div>
-        <div className="pointer-events-none absolute bottom-20 right-10 select-none text-4xl text-pink-300">
+        <div className="pointer-events-none absolute right-10 bottom-20 text-4xl text-pink-300 select-none">
           (◕‿◕✿)
         </div>
 
-        <div className="z-10 mx-auto max-w-md p-6 text-center relative">
+        <div className="relative z-10 mx-auto max-w-md p-6 text-center">
           {/* Speech bubble */}
           <div className="floating relative mb-8 rounded-3xl border-4 border-pink-300 bg-white p-8 shadow-lg">
-            <div className="absolute -bottom-6 right-10 h-0 w-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[30px] border-t-pink-300" />
+            <div className="absolute right-10 -bottom-6 h-0 w-0 border-t-[30px] border-r-[20px] border-l-[20px] border-t-pink-300 border-r-transparent border-l-transparent" />
             <h1 className="mb-2 text-4xl font-bold text-pink-600">
-              You're so <span className="text-pink-800">kawaii!</span>
+              You&apos;re so <span className="text-pink-800">kawaii!</span>
             </h1>
             <p className="text-pink-500">〜(꒪꒳꒪)〜</p>
           </div>
 
           {/* Anime face */}
-          <div className="relative mx-auto mb-8 flex h-48 w-48 items-center justify-center rounded-full bg-pink-300">
-            <div className="relative flex h-40 w-40 flex-col items-center justify-center rounded-full bg-pink-100">
-              {/* Eyes */}
-              <div className="relative z-10 mb-2 flex">
-                <div className="relative mx-1 flex h-10 w-10 items-center justify-center rounded-full bg-white">
-                  <div className="animate-blink h-6 w-6 rounded-full bg-pink-600" />
+          <div className="relative mx-auto mb-8 h-48 w-48">
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-pink-300">
+              <div className="relative flex h-40 w-40 flex-col items-center justify-center rounded-full bg-pink-100">
+                {/* Eyes */}
+                <div className="relative z-10 mb-2 flex">
+                  <div className="relative mx-1 flex h-10 w-10 items-center justify-center rounded-full bg-white">
+                    <div className="animate-blink h-6 w-6 rounded-full bg-pink-600" />
+                  </div>
+                  <div className="relative mx-1 flex h-10 w-10 items-center justify-center rounded-full bg-white">
+                    <div className="animate-blink h-6 w-6 rounded-full bg-pink-600" />
+                  </div>
                 </div>
-                <div className="relative mx-1 flex h-10 w-10 items-center justify-center rounded-full bg-white">
-                  <div className="animate-blink h-6 w-6 rounded-full bg-pink-600" />
+                {/* Blush */}
+                <div className="relative z-10 mb-1 flex">
+                  <div className="mx-4 h-3 w-6 rounded-full bg-pink-300" />
+                  <div className="mx-4 h-3 w-6 rounded-full bg-pink-300" />
+                </div>
+                {/* Mouth */}
+                <div className="relative z-10 h-6 w-12 rounded-b-full bg-pink-400" />
+                {/* Sparkles in eyes */}
+                <div className="pointer-events-none absolute top-8 left-8 text-xs text-white select-none">
+                  ✧
+                </div>
+                <div className="pointer-events-none absolute top-8 right-8 text-xs text-white select-none">
+                  ✧
                 </div>
               </div>
-              {/* Blush */}
-              <div className="relative z-10 mb-1 flex">
-                <div className="mx-4 h-3 w-6 rounded-full bg-pink-300" />
-                <div className="mx-4 h-3 w-6 rounded-full bg-pink-300" />
+              {/* Fixed here: swap bottom-4 and right-4 */}
+              <div className="pointer-events-none absolute right-4 -bottom-4 flex h-16 w-16 items-center justify-center rounded-full bg-pink-400 text-2xl text-white select-none">
+                ♡
               </div>
-              {/* Mouth */}
-              <div className="relative z-10 h-6 w-12 rounded-b-full bg-pink-400" />
-              {/* Sparkles in eyes */}
-              <div className="pointer-events-none absolute top-8 left-8 select-none text-xs text-white">
-                ✧
-              </div>
-              <div className="pointer-events-none absolute top-8 right-8 select-none text-xs text-white">
-                ✧
-              </div>
-            </div>
-            <div className="pointer-events-none absolute -bottom-4 -right-4 flex h-16 w-16 items-center justify-center rounded-full bg-pink-400 text-2xl text-white select-none">
-              ♡
             </div>
           </div>
 
           {/* Button */}
           <button
             onClick={handleClick}
-            className="relative mb-6 overflow-hidden rounded-full border-2 border-pink-700 bg-pink-500 px-6 py-3 text-lg font-bold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:bg-pink-600 select-none"
+            className="relative mb-6 transform overflow-hidden rounded-full border-2 border-pink-700 bg-pink-500 px-6 py-3 text-lg font-bold text-white shadow-md transition-all duration-300 select-none hover:scale-105 hover:bg-pink-600"
           >
             <span className="relative z-10 flex items-center">
               <i className="fas fa-heart mr-2" />
@@ -205,9 +207,7 @@ export default function KawaiiPage() {
             <p className="italic">
               &quot;No matter how far apart we are, my heart will always find its way to you.&quot;
             </p>
-            <p className="mt-2 text-sm text-pink-500">
-              - Your personal anime love interest ♡
-            </p>
+            <p className="mt-2 text-sm text-pink-500">- Your personal anime love interest ♡</p>
             <div className="mt-2 flex justify-center space-x-2 select-none">
               <span>(｡♥‿♥｡)</span>
             </div>
