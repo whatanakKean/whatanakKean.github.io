@@ -7,8 +7,8 @@ import SocialIcon from '@/components/social-icons'
 
 export default function Footer() {
   const pathname = usePathname()
-  if (pathname === '/imissyou') {
-    return null // hide footer on /personal page
+  if (pathname === '/imissyou' || pathname === '/nak/memorymap') {
+    return null // hide header on /personal page
   }
 
   return (

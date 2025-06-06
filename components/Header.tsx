@@ -11,7 +11,7 @@ import SearchButton from './SearchButton'
 
 const Header = () => {
   const pathname = usePathname()
-  if (pathname === '/imissyou') {
+  if (pathname === '/imissyou' || pathname === '/nak/memorymap') {
     return null // hide header on /personal page
   }
 
