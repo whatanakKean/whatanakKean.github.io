@@ -1,8 +1,16 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
 import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
 
 export default function Footer() {
+  const pathname = usePathname()
+  if (pathname === '/personal') {
+    return null // hide footer on /personal page
+  }
+
   return (
     <footer>
       <div className="mt-16 flex flex-col items-center">
