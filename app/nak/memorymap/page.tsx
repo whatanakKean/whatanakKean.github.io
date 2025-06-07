@@ -3,17 +3,29 @@
 
 import { genPageMetadata } from 'app/seo';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import type { LatLngExpression, Icon, DivIcon } from 'leaflet';
+import type { MapContainerProps } from 'react-leaflet';
 
+// Define a custom interface to include all necessary props
+interface ExtendedMapContainerProps extends Omit<MapContainerProps, 'center' | 'zoom'> {
+  center: LatLngExpression;
+  zoom: number;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
 
-const MapWithNoSSR = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
-  ssr: false,
-});
+const MapWithNoSSR = dynamic(
+  () => import('react-leaflet').then((mod) => mod.MapContainer),
+  { ssr: false },
+) as React.ComponentType<ExtendedMapContainerProps>;
+
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
   ssr: false,
 });
+
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), {
   ssr: false,
 });
@@ -84,8 +96,23 @@ const memories: Memory[] = [
 export default function MemoryMap() {
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [heartMarkerIcon, setHeartMarkerIcon] = useState<Icon | DivIcon | null>(null);
 
   useEffect(() => {
+    // Dynamically import Leaflet only on the client
+    import('leaflet').then((L) => {
+      setHeartMarkerIcon(
+        L.divIcon({
+          className:
+            'flex h-9 w-9 animate-pulse cursor-pointer items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-pink-500 to-rose-600 text-lg text-white shadow-[0_0_15px_rgba(231,84,136,0.6)]',
+          html: '<span>♥</span>',
+          iconSize: [36, 36],
+          iconAnchor: [18, 36], // Align bottom center of the marker
+          popupAnchor: [0, -36],
+        }),
+      );
+    });
+
     // Create floating hearts
     const heartsContainer = document.getElementById('heartsContainer');
     if (heartsContainer) {
@@ -119,45 +146,44 @@ export default function MemoryMap() {
     setIsModalOpen(false);
   };
 
-  const heartMarkerIcon = L.divIcon({
-    className:
-      'flex h-9 w-9 animate-pulse cursor-pointer items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-pink-500 to-rose-600 text-lg text-white shadow-[0_0_15px_rgba(231,84,136,0.6)] transition-transform duration-300 hover:scale-110',
-    html: '<span>♥</span>',
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -18],
-  });
+  const handleModalKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      closeModal();
+    }
+  };
 
   return (
-    <div className="font-raleway relative h-screen overflow-hidden bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 text-purple-900">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 font-raleway text-purple-900">
       {/* Floating Hearts */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden" id="heartsContainer" />
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" id="heartsContainer" />
 
       {/* Map */}
-      <MapWithNoSSR
-        center={[11.5564, 104.9282]}
-        zoom={14}
-        style={{
-          height: '100%',
-          width: '100%',
-          position: 'absolute',
-          zIndex: 1,
-          filter: 'sepia(0.2) saturate(1.1) brightness(0.95)',
-        }}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        {memories.map((memory, index) => (
-          <Marker
-            key={index}
-            position={[memory.lat, memory.lng]}
-            icon={heartMarkerIcon}
-            eventHandlers={{ click: () => showMemoryModal(memory) }}
+      <div className="fixed inset-0 z-[1]">
+        <MapWithNoSSR
+          center={[11.5564, 104.9282] as LatLngExpression}
+          zoom={14}
+          style={{
+            height: '100%',
+            width: '100%',
+            filter: 'sepia(0.2) saturate(1.1) brightness(0.95)',
+          }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-        ))}
-      </MapWithNoSSR>
+          {heartMarkerIcon &&
+            memories.map((memory, index) => (
+              <Marker
+                key={index}
+                position={[memory.lat, memory.lng] as LatLngExpression}
+                icon={heartMarkerIcon}
+                eventHandlers={{ click: () => showMemoryModal(memory) }}
+              />
+            ))}
+        </MapWithNoSSR>
+      </div>
 
       {/* Map Title */}
       <div className="absolute top-5 left-1/2 z-10 max-w-[90%] -translate-x-1/2 transform rounded-full border border-white/50 bg-white/85 p-5 text-center shadow-[0_5px_25px_rgba(163,95,163,0.3)] backdrop-blur-sm">
@@ -174,18 +200,26 @@ export default function MemoryMap() {
         <div
           className="animate-fadeIn fixed inset-0 z-[1000] flex items-center justify-center bg-black/70"
           onClick={closeModal}
+          onKeyDown={handleModalKeyDown}
+          role="dialog"
+          aria-labelledby="modal-title"
+          tabIndex={0}
         >
           <div
             className="max-h-[90vh] w-[90%] max-w-2xl overflow-hidden rounded-2xl border border-pink-200/50 bg-gradient-to-b from-white to-pink-50 shadow-[0_10px_40px_rgba(163,95,163,0.4)]"
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={handleModalKeyDown}
+            role="document"
+            tabIndex={-1}
           >
             <div className="flex items-center justify-between border-b-2 border-white/30 bg-gradient-to-r from-rose-500 to-purple-500 p-5 text-white">
-              <h2 className="text-xl">
+              <h2 className="text-xl" id="modal-title">
                 <span className="mr-2">❤</span> {selectedMemory.title}
               </h2>
               <button
                 className="cursor-pointer border-none bg-transparent text-2xl text-white transition-transform hover:scale-125"
                 onClick={closeModal}
+                aria-label="Close modal"
               >
                 ×
               </button>
@@ -199,10 +233,12 @@ export default function MemoryMap() {
               </div>
               <div className="flex flex-col gap-5">
                 {selectedMemory.images.map((image, index) => (
-                  <img
+                  <Image
                     key={index}
                     src={image}
                     alt={selectedMemory.title}
+                    width={800}
+                    height={600}
                     className="w-full rounded-lg border border-rose-300/20 shadow-[0_5px_15px_rgba(0,0,0,0.1)] transition-transform duration-400 hover:scale-102 hover:shadow-[0_8px_25px_rgba(163,95,163,0.3)]"
                   />
                 ))}
@@ -226,6 +262,16 @@ export default function MemoryMap() {
       {/* Global Styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:ital,wght@0,300;0,400;1,300&display=swap');
+
+        html,
+        body,
+        #__next {
+          margin: 0;
+          padding: 0;
+          height: 100vh;
+          width: 100vw;
+          overflow: hidden;
+        }
 
         .font-raleway {
           font-family: 'Raleway', sans-serif;
