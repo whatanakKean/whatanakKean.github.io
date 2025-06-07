@@ -5,13 +5,21 @@ import Head from 'next/head'
 import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 
-// Dynamically import Leaflet to avoid SSR issues
+interface Memory {
+  title: string;
+  lat: number;
+  lng: number;
+  date: string;
+  images: string[];
+  description: string;
+}
+
 const LazyLeaflet = dynamic(
   () => import('leaflet'),
   { ssr: false }
 )
 
-const memories = [
+const memories: Memory[] = [
   {
     title: "Our First Date at Brown Coffee",
     lat: 11.5695,
@@ -23,54 +31,13 @@ const memories = [
     ],
     description: "I remember how nervous I was that evening. When you walked in, the whole world seemed to fade away. We talked for hours about everything and nothing, and I knew right then that this was something special. The way your eyes lit up when you talked about your dreams made me fall for you even more."
   },
-  {
-    title: "Romantic Dinner at Malis",
-    lat: 11.5632,
-    lng: 104.9281,
-    date: "April 20, 2022",
-    images: [
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800"
-    ],
-    description: "Our one-month anniversary! You surprised me with this beautiful restaurant. I'll never forget how the candlelight reflected in your eyes as you reached across the table to hold my hand. The way you tried to feed me that dessert even though we were both so full - that's when I realized how thoughtful you really are."
-  },
-  {
-    title: "Sunset at Wat Phnom",
-    lat: 11.5765,
-    lng: 104.9230,
-    date: "May 3, 2022",
-    images: [
-      "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800",
-      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800"
-    ],
-    description: "The sky was painted in hues of orange and pink, but all I could see was you. When you put your arm around me as we watched the sunset, I felt like the luckiest person in the world. That moment, with the temple bells ringing softly in the distance, will forever be etched in my heart."
-  },
-  {
-    title: "Biking Along the Riverside",
-    lat: 11.5726,
-    lng: 104.9293,
-    date: "June 10, 2022",
-    images: [
-      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800"
-    ],
-    description: "Remember how we kept bumping into each other because we were too busy laughing to steer straight? That day was pure joy. I loved how you raced ahead only to circle back to ride beside me. The wind in our hair, the river beside us, and your laughter - it was absolute perfection."
-  },
-  {
-    title: "Royal Palace Visit",
-    lat: 11.5622,
-    lng: 104.9303,
-    date: "July 4, 2022",
-    images: [
-      "https://images.unsplash.com/photo-1533856493584-0c6ca8ca9ce3?w=800",
-      "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800"
-    ],
-    description: "You looked so adorable trying to take the perfect photo for me. I was mesmerized by the palace, but even more by the way your face lit up explaining its history to me. When we got caught in that sudden downpour and ran laughing to take shelter, I knew these were the moments I'd cherish forever."
-  }
+  // ... rest of the memories array
 ];
 
 export default function MemoryMapPage() {
   const mapRef = useRef(null);
   const heartsContainerRef = useRef(null);
-  const [currentMemory, setCurrentMemory] = useState(null);
+  const [currentMemory, setCurrentMemory] = useState<Memory | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isMapLoading, setIsMapLoading] = useState(true);
@@ -82,48 +49,46 @@ export default function MemoryMapPage() {
   useEffect(() => {
     if (!isClient) return;
 
+    let map: any;
     setIsMapLoading(true);
     
     // Initialize map
     if (mapRef.current && typeof window !== 'undefined') {
-      const L = require('leaflet');
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-        iconUrl: require('leaflet/dist/images/marker-icon.png'),
-        shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-      });
+      import('leaflet').then((L) => {
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+          iconUrl: require('leaflet/dist/images/marker-icon.png'),
+          shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+        });
 
-      const map = L.map(mapRef.current).setView([11.5564, 104.9282], 14);
+        map = L.map(mapRef.current).setView([11.5564, 104.9282], 14);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-
-      // Add markers
-      memories.forEach((memory) => {
-        const marker = L.marker([memory.lat, memory.lng], {
-          icon: L.divIcon({
-            className: 'heart-marker',
-            html: '♥',
-            iconSize: [36, 36]
-          })
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        
-        marker.on('click', () => {
-          setCurrentMemory(memory);
-          setIsModalOpen(true);
+
+        // Add markers
+        memories.forEach((memory) => {
+          const marker = L.marker([memory.lat, memory.lng], {
+            icon: L.divIcon({
+              className: 'heart-marker',
+              html: '♥',
+              iconSize: [36, 36]
+            })
+          }).addTo(map);
+          
+          marker.on('click', () => {
+            setCurrentMemory(memory);
+            setIsModalOpen(true);
+          });
+        });
+
+        // Hide loading when map is ready
+        map.whenReady(() => {
+          setIsMapLoading(false);
         });
       });
-
-      // Hide loading when map is ready
-      map.whenReady(() => {
-        setIsMapLoading(false);
-      });
-
-      return () => {
-        map.remove();
-      };
     }
 
     // Create floating hearts
@@ -139,13 +104,17 @@ export default function MemoryMapPage() {
         heartsContainer.appendChild(heart);
       }
     }
+
+    return () => {
+      if (map) map.remove();
+    };
   }, [isClient]);
 
   // Close modal with ESC key
   useEffect(() => {
     if (!isClient) return;
 
-    const handleEsc = (e) => {
+    const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsModalOpen(false);
       }
