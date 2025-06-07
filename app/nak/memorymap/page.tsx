@@ -33,7 +33,7 @@ const memories: Memory[] = [
 
 export default function MemoryMapPage() {
   const mapRef = useRef(null)
-  const heartsContainerRef = useRef(null)
+  const heartsContainerRef = useRef<HTMLDivElement>(null)
   const [currentMemory, setCurrentMemory] = useState<Memory | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
