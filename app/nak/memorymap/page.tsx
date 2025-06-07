@@ -169,10 +169,7 @@ export default function MemoryMap() {
             filter: 'sepia(0.2) saturate(1.1) brightness(0.95)',
           }}
         >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {heartMarkerIcon &&
             memories.map((memory, index) => (
               <Marker
