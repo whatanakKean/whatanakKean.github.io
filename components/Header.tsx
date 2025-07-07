@@ -11,8 +11,8 @@ import SearchButton from './SearchButton'
 
 const Header = () => {
   const pathname = usePathname()
-  if (pathname === '/imissyou' || pathname === '/nak/memorymap') {
-    return null // hide header on /personal page
+  if (pathname.startsWith('/dashboards/')) {
+    return null
   }
 
   let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10'
