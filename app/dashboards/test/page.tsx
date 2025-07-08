@@ -3,10 +3,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as echarts from "echarts";
 
+type GDPItem = {
+  country: string;
+  value: number | null;
+};
+
 export default function Dashboard1() {
-  const [gdpData, setGdpData] = useState([]);
+  const [gdpData, setGdpData] = useState<GDPItem[]>([]);
   const [loading, setLoading] = useState(true);
   const chartRef = useRef<HTMLDivElement>(null);
+  const chartInstance = useRef<echarts.EChartsType | null>(null);
 
   useEffect(() => {
     const fetchGDPData = async () => {
@@ -35,53 +41,77 @@ export default function Dashboard1() {
     fetchGDPData();
   }, []);
 
-  // Initialize ECharts chart when data is loaded
   useEffect(() => {
-    if (!loading && chartRef.current && gdpData.length > 0) {
-      const chart = echarts.init(chartRef.current);
+    if (!loading && chartRef.current) {
+      if (!chartInstance.current) {
+        chartInstance.current = echarts.init(chartRef.current);
+      }
 
-      const option = {
+      const option: echarts.EChartsOption = {
         title: {
-          text: "GDP by Country (2022)",
+          text: "GDP (Current US$) by Country - 2022",
+          left: "center",
+          textStyle: { color: "#333" },
         },
         tooltip: {
           trigger: "axis",
-          formatter: (params: any) => {
-            const val = params[0].value.toLocaleString("en-US", {
+          axisPointer: { type: "shadow" },
+          formatter: function (params: any) {
+            const item = params[0];
+            return `${item.name}<br/>GDP: ${item.value?.toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
               maximumFractionDigits: 0,
-            });
-            return `${params[0].name}: ${val}`;
+            }) ?? "N/A"}`;
           },
         },
         xAxis: {
           type: "category",
           data: gdpData.map((item) => item.country),
+          axisLabel: {
+            rotate: 30,
+            interval: 0,
+          },
         },
         yAxis: {
           type: "value",
+          axisLabel: {
+            formatter: (value: number) =>
+              value >= 1e12
+                ? value / 1e12 + "T"
+                : value >= 1e9
+                ? value / 1e9 + "B"
+                : value >= 1e6
+                ? value / 1e6 + "M"
+                : value,
+          },
         },
         series: [
           {
-            data: gdpData.map((item) => item.value),
+            data: gdpData.map((item) => item.value ?? 0),
             type: "bar",
             itemStyle: {
               color: "#3b82f6",
             },
           },
         ],
+        grid: {
+          left: "10%",
+          right: "10%",
+          bottom: "15%",
+        },
       };
 
-      chart.setOption(option);
+      chartInstance.current.setOption(option);
 
-      // Resize chart on window resize
-      const resize = () => chart.resize();
-      window.addEventListener("resize", resize);
+      const resizeObserver = new ResizeObserver(() => {
+        chartInstance.current?.resize();
+      });
+
+      resizeObserver.observe(chartRef.current);
 
       return () => {
-        chart.dispose();
-        window.removeEventListener("resize", resize);
+        resizeObserver.disconnect();
       };
     }
   }, [gdpData, loading]);
@@ -93,18 +123,15 @@ export default function Dashboard1() {
         GDP (Current US$) for selected countries in 2022
       </p>
 
-      {/* Chart container */}
-      <div
-        ref={chartRef}
-        className="w-full h-96 mb-10 bg-white dark:bg-gray-900 rounded shadow"
-      />
-
-      {/* Table fallback for raw data */}
-      <div className="bg-white dark:bg-gray-900 shadow rounded-lg overflow-x-auto">
-        {loading ? (
-          <p className="p-4 text-gray-500">Loading data...</p>
-        ) : (
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      {loading ? (
+        <p className="p-4 text-gray-500">Loading data...</p>
+      ) : (
+        <>
+          <div
+            ref={chartRef}
+            className="w-full h-[400px] max-w-full"
+          />
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mt-8">
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -134,8 +161,8 @@ export default function Dashboard1() {
               ))}
             </tbody>
           </table>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }

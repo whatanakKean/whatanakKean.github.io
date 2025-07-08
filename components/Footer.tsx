@@ -6,10 +6,10 @@ import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
 
 export default function Footer() {
-  const pathname = usePathname()
-  if (pathname.startsWith('/dashboards/')) {
-    return null
-  }
+  // const pathname = usePathname()
+  // if (pathname.startsWith('/dashboards/')) {
+  //   return null
+  // }
 
   return (
     <footer>
