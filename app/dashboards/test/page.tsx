@@ -78,12 +78,12 @@ export default function Dashboard1() {
           axisLabel: {
             formatter: (value: number) =>
               value >= 1e12
-                ? value / 1e12 + "T"
+                ? `${value / 1e12}T`
                 : value >= 1e9
-                ? value / 1e9 + "B"
+                ? `${value / 1e9}B`
                 : value >= 1e6
-                ? value / 1e6 + "M"
-                : value,
+                ? `${value / 1e6}M`
+                : `${value}`,
           },
         },
         series: [
@@ -127,10 +127,7 @@ export default function Dashboard1() {
         <p className="p-4 text-gray-500">Loading data...</p>
       ) : (
         <>
-          <div
-            ref={chartRef}
-            className="w-full h-[400px] max-w-full"
-          />
+          <div ref={chartRef} className="w-full h-[400px] max-w-full" />
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mt-8">
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
