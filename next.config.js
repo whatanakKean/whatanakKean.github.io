@@ -1,8 +1,8 @@
-const { withContentlayer } = require('next-contentlayer2');
+const { withContentlayer } = require('next-contentlayer2')
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
-});
+})
 
 // You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
@@ -14,7 +14,7 @@ const ContentSecurityPolicy = `
   connect-src *;
   font-src 'self';
   frame-src giscus.app
-`;
+`
 
 const securityHeaders = [
   {
@@ -45,17 +45,17 @@ const securityHeaders = [
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=()',
   },
-];
+]
 
-const output = process.env.EXPORT ? 'export' : undefined;
-const basePath = process.env.BASE_PATH || undefined;
-const unoptimized = process.env.UNOPTIMIZED ? true : undefined;
+const output = process.env.EXPORT ? 'export' : undefined
+const basePath = process.env.BASE_PATH || undefined
+const unoptimized = process.env.UNOPTIMIZED ? true : undefined
 
 /**
  * @type {import('next').NextConfig}
  **/
 module.exports = () => {
-  const plugins = [withContentlayer, withBundleAnalyzer];
+  const plugins = [withContentlayer, withBundleAnalyzer]
   return plugins.reduce((acc, next) => next(acc), {
     output,
     basePath,
@@ -80,7 +80,7 @@ module.exports = () => {
           source: '/(.*)',
           headers: securityHeaders,
         },
-      ];
+      ]
     },
     webpack: (config, options) => {
       // Fallback loader for SVG imports outside JS/TS files
@@ -88,16 +88,16 @@ module.exports = () => {
         test: /\.svg$/,
         issuer: { not: [/\.[jt]sx?$/] },
         type: 'asset/resource',
-      });
+      })
 
       // Use @svgr/webpack for SVG imports in JS/TS files
       config.module.rules.push({
         test: /\.svg$/,
         issuer: /\.[jt]sx?$/,
         use: ['@svgr/webpack'],
-      });
+      })
 
-      return config;
+      return config
     },
-  });
-};
+  })
+}
