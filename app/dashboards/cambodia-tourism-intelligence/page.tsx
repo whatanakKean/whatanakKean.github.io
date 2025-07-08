@@ -87,10 +87,10 @@ export default function Dashboard1() {
               value >= 1e12
                 ? `${value / 1e12}T`
                 : value >= 1e9
-                ? `${value / 1e9}B`
-                : value >= 1e6
-                ? `${value / 1e6}M`
-                : `${value}`,
+                  ? `${value / 1e9}B`
+                  : value >= 1e6
+                    ? `${value / 1e6}M`
+                    : `${value}`,
           },
         },
         series: [
@@ -138,10 +138,10 @@ export default function Dashboard1() {
           <table className="mt-8 min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                   Country
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                   GDP (US$)
                 </th>
               </tr>
@@ -149,10 +149,10 @@ export default function Dashboard1() {
             <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
               {gdpData.map((item, idx) => (
                 <tr key={idx}>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-gray-100">
                     {item.country}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-gray-100">
                     {item.value
                       ? item.value.toLocaleString('en-US', {
                           style: 'currency',
