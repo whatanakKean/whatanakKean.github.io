@@ -133,112 +133,110 @@ export default function Dashboard() {
         <h1 className="text-2xl font-medium">Dashboard</h1>
       </div>
 
-      <main>
-        <div>
-          {/* Stats Cards */}
-          <div className="max-w-8xl tablet:px-10 desktop:px-14 border-border phone:grid-cols-2 laptop:grid-cols-4 mx-auto grid w-full grid-cols-1 gap-6 border-b px-6 py-4">
-            <StatCard
-              title="Created Tickets"
-              value="24,208"
-              change="-5%"
-              changeType="negative"
-              description="Compare to last month"
-            />
-            <StatCard
-              title="Unsolved Tickets"
-              value="4,564"
-              change="+2%"
-              changeType="positive"
-              description="Compare to last month"
-            />
-            <StatCard
-              title="Resolved Tickets"
-              value="18,208"
-              change="+8%"
-              changeType="positive"
-              description="Compare to last month"
-            />
-            <StatCard
-              title="Average First Time Reply"
-              value="12:01 min"
-              change="+8%"
-              changeType="positive"
-              description="Compare to last month"
-            />
-          </div>
+      <main className="space-y-6 p-6">
+        {/* Top Stats Row - 4 cards in a row */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Created Tickets"
+            value="24,208"
+            change="-5%"
+            changeType="negative"
+            description="Compare to last month"
+          />
+          <StatCard
+            title="Unsolved Tickets"
+            value="4,564"
+            change="+2%"
+            changeType="positive"
+            description="Compare to last month"
+          />
+          <StatCard
+            title="Resolved Tickets"
+            value="18,208"
+            change="+8%"
+            changeType="positive"
+            description="Compare to last month"
+          />
+          <StatCard
+            title="Average First Time Reply"
+            value="12:01 min"
+            change="+8%"
+            changeType="positive"
+            description="Compare to last month"
+          />
+        </div>
 
-          {/* Main Charts */}
-          <div className="border-border laptop:grid-cols-3 laptop:divide-x laptop:divide-y-0 laptop:divide-border grid grid-cols-1 divide-y border-b">
-            {/* Average Tickets Chart */}
-            <div className="max-w-8xl tablet:px-10 desktop:px-14 laptop:col-span-2 mx-auto w-full px-6 py-4">
-              <ChartSection
-                title="Average Tickets Created"
-                icon="file-plus2"
-                dateRange="Dec 18, 2023 - Dec 24, 2023"
-              >
-                <div className="flex flex-wrap">
-                  <div className="my-4 flex w-52 shrink-0 flex-col justify-center gap-6">
-                    <MetricWithColor title="Avg. Tickets Created" value="3,817" color="#60C2FB" />
-                    <MetricWithColor title="Avg. Tickets Resolved" value="2,176" color="#3161F8" />
-                  </div>
-                  <div className="relative h-96 min-w-[320px] flex-1">
-                    <ReactECharts
-                      option={ticketsChartOption}
-                      style={{ height: '100%', width: '100%' }}
-                    />
-                  </div>
+        {/* Middle Charts Row - 2/3 and 1/3 split */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Average Tickets Chart - takes 2/3 width on large screens */}
+          <div className="lg:col-span-2">
+            <ChartSection
+              title="Average Tickets Created"
+              icon="file-plus2"
+              dateRange="Dec 18, 2023 - Dec 24, 2023"
+            >
+              <div className="flex flex-col lg:flex-row">
+                <div className="my-4 flex w-full flex-col justify-center gap-6 lg:w-52 lg:shrink-0">
+                  <MetricWithColor title="Avg. Tickets Created" value="3,817" color="#60C2FB" />
+                  <MetricWithColor title="Avg. Tickets Resolved" value="2,176" color="#3161F8" />
                 </div>
-              </ChartSection>
-            </div>
-
-            {/* Conversions Chart */}
-            <div className="max-w-8xl tablet:px-10 desktop:px-14 laptop:col-span-1 mx-auto w-full px-6 py-4">
-              <ChartSection title="Conversions" icon="circle-percent">
-                <div className="mt-3">
-                  <span className="mr-1 text-2xl font-medium">17,220</span>
-                  <span className="text-muted-foreground/60">Sales</span>
-                </div>
-                <div className="relative max-h-80 flex-grow">
+                <div className="relative h-96 min-w-[320px] flex-1">
                   <ReactECharts
-                    option={conversionsChartOption}
+                    option={ticketsChartOption}
                     style={{ height: '100%', width: '100%' }}
                   />
                 </div>
-              </ChartSection>
-            </div>
+              </div>
+            </ChartSection>
           </div>
 
-          {/* Bottom Charts */}
-          <div className="border-border laptop:grid-cols-2 laptop:divide-x laptop:divide-y-0 laptop:divide-border grid grid-cols-1 divide-y border-b">
-            {/* Tickets by Channel */}
-            <div className="max-w-8xl tablet:px-10 desktop:px-14 laptop:col-span-1 mx-auto w-full px-6 py-4">
-              <ChartSection title="Ticket By Channels" icon="rss">
-                <div className="relative flex min-h-64 flex-grow flex-col justify-center">
-                  <ReactECharts
-                    option={channelsChartOption}
-                    style={{ height: '100%', width: '100%' }}
-                  />
-                </div>
-              </ChartSection>
-            </div>
+          {/* Conversions Chart - takes 1/3 width on large screens */}
+          <div className="lg:col-span-1">
+            <ChartSection title="Conversions" icon="circle-percent">
+              <div className="mt-3">
+                <span className="mr-1 text-2xl font-medium">17,220</span>
+                <span className="text-muted-foreground/60">Sales</span>
+              </div>
+              <div className="relative h-80 flex-grow">
+                <ReactECharts
+                  option={conversionsChartOption}
+                  style={{ height: '100%', width: '100%' }}
+                />
+              </div>
+            </ChartSection>
+          </div>
+        </div>
 
-            {/* Customer Satisfaction */}
-            <div className="max-w-8xl tablet:px-10 desktop:px-14 laptop:col-span-1 mx-auto w-full px-6 py-4">
-              <ChartSection title="Customer Satisfaction" icon="smile-plus">
-                <div className="my-4 flex h-full items-center justify-between">
-                  <div className="mx-auto grid w-full grid-cols-2 gap-6">
-                    <div className="flex flex-col items-start justify-center">
-                      <div className="text-muted-foreground text-xs">Responses Received</div>
-                      <div className="text-2xl font-medium">156 Customers</div>
-                    </div>
+        {/* Bottom Charts Row - 50/50 split */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Tickets by Channel */}
+          <div>
+            <ChartSection title="Ticket By Channels" icon="rss">
+              <div className="relative flex min-h-64 flex-grow flex-col justify-center">
+                <ReactECharts
+                  option={channelsChartOption}
+                  style={{ height: '100%', width: '100%' }}
+                />
+              </div>
+            </ChartSection>
+          </div>
 
-                    <SatisfactionMetric type="positive" percentage="80%" />
-                    <SatisfactionMetric type="neutral" percentage="15%" />
-                    <SatisfactionMetric type="negative" percentage="5%" />
+          {/* Customer Satisfaction */}
+          <div>
+            <ChartSection title="Customer Satisfaction" icon="smile-plus">
+              <div className="my-4 flex h-full items-center justify-between">
+                <div className="mx-auto grid w-full grid-cols-2 gap-6">
+                  <div className="flex flex-col items-start justify-center">
+                    <div className="text-muted-foreground text-xs">Responses Received</div>
+                    <div className="text-2xl font-medium">156 Customers</div>
                   </div>
+
+                  <SatisfactionMetric type="positive" percentage="80%" />
+                  <SatisfactionMetric type="neutral" percentage="15%" />
+                  <SatisfactionMetric type="negative" percentage="5%" />
                 </div>
-              </ChartSection>
-            </div>
+              </div>
+            </ChartSection>
           </div>
         </div>
       </main>
@@ -301,7 +299,7 @@ function StatCard({
     )
 
   return (
-    <section className="flex flex-col">
+    <section className="flex h-full flex-col rounded-lg border p-4 shadow-sm">
       <h2 className="text-muted-foreground mb-1 text-sm">{title}</h2>
       <div className="flex items-center gap-2">
         <span className="text-xl font-medium">{value}</span>
@@ -312,7 +310,7 @@ function StatCard({
           {arrowIcon}
         </span>
       </div>
-      <div className="text-muted-foreground text-xs">{description}</div>
+      <div className="text-muted-foreground mt-1 text-xs">{description}</div>
     </section>
   )
 }
@@ -330,9 +328,9 @@ function ChartSection({
   dateRange?: string
 }) {
   return (
-    <section className="flex h-full flex-col gap-2">
+    <section className="flex h-full flex-col gap-4 rounded-lg border p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <h2 className="text-default-foreground flex items-center text-base">
+        <h2 className="text-default-foreground flex items-center text-base font-medium">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -351,7 +349,7 @@ function ChartSection({
         </h2>
         {dateRange && <div className="text-muted-foreground text-sm">{dateRange}</div>}
       </div>
-      {children}
+      <div className="flex-1">{children}</div>
     </section>
   )
 }
@@ -414,7 +412,7 @@ function SatisfactionMetric({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="lucide lucide-thumbs-up h-6 w-6"
+          className={`lucide lucide-${icon} h-6 w-6`}
         >
           {type === 'negative' ? (
             <>
