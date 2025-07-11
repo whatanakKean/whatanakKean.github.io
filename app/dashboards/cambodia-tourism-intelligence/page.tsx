@@ -6,7 +6,7 @@ export default function Dashboard() {
   return (
     <div className="flex-grow overflow-auto">
       <div className="max-w-8xl tablet:px-10 desktop:px-14 border-border mx-auto flex h-16 w-full items-center justify-between border-b px-6">
-        <h1 className="text-2xl font-medium">Dashboard</h1>
+        <h1 className="text-2xl font-medium">Cambodia Tourism Intelligence</h1>
       </div>
 
       <main>
