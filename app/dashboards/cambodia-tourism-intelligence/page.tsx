@@ -1,18 +1,142 @@
 'use client'
 
 import React from 'react'
+import ReactECharts from 'echarts-for-react'
 
 export default function Dashboard() {
+  // Fake data for charts
+  const ticketsChartOption = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+    },
+    legend: {
+      data: ['Created', 'Resolved'],
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    },
+    yAxis: {
+      type: 'value',
+    },
+    series: [
+      {
+        name: 'Created',
+        type: 'bar',
+        data: [3200, 3600, 3800, 4200, 3900, 3500, 4000],
+        itemStyle: {
+          color: '#60C2FB',
+        },
+      },
+      {
+        name: 'Resolved',
+        type: 'bar',
+        data: [2000, 2200, 2300, 2500, 2100, 1900, 2400],
+        itemStyle: {
+          color: '#3161F8',
+        },
+      },
+    ],
+  }
+
+  const conversionsChartOption = {
+    tooltip: {
+      trigger: 'item',
+    },
+    legend: {
+      top: '5%',
+      left: 'center',
+    },
+    series: [
+      {
+        name: 'Sales',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+        label: {
+          show: false,
+          position: 'center',
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '18',
+            fontWeight: 'bold',
+          },
+        },
+        labelLine: {
+          show: false,
+        },
+        data: [
+          { value: 1048, name: 'Direct' },
+          { value: 735, name: 'Email' },
+          { value: 580, name: 'Ads' },
+          { value: 484, name: 'Referral' },
+          { value: 300, name: 'Social' },
+        ],
+      },
+    ],
+  }
+
+  const channelsChartOption = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'value',
+    },
+    yAxis: {
+      type: 'category',
+      data: ['Email', 'Chat', 'Phone', 'Social', 'Portal'],
+    },
+    series: [
+      {
+        name: 'Tickets',
+        type: 'bar',
+        data: [1200, 2000, 1500, 800, 700],
+        itemStyle: {
+          color: function (params: { dataIndex: number }) {
+            const colors = ['#60C2FB', '#3161F8', '#5fb67a', '#f5c36e', '#da6d67']
+            return colors[params.dataIndex]
+          },
+        },
+      },
+    ],
+  }
+
   return (
     <div className="flex-grow overflow-auto">
       <div className="max-w-8xl tablet:px-10 desktop:px-14 border-border mx-auto flex h-16 w-full items-center justify-between border-b px-6">
-        <h1 className="text-2xl font-medium">Cambodia Tourism Intelligence</h1>
+        <h1 className="text-2xl font-medium">Dashboard</h1>
       </div>
 
       <main>
         <div>
           {/* Stats Cards */}
-          <div className="max-w-8xl tablet:px-10 desktop:px-14 border-border phone:grid-cols-2 laptop:grid-cols-4 mx-auto grid w-full grid-cols-1 gap-y-6 border-b px-6 py-4">
+          <div className="max-w-8xl tablet:px-10 desktop:px-14 border-border phone:grid-cols-2 laptop:grid-cols-4 mx-auto grid w-full grid-cols-1 gap-6 border-b px-6 py-4">
             <StatCard
               title="Created Tickets"
               value="24,208"
@@ -58,8 +182,10 @@ export default function Dashboard() {
                     <MetricWithColor title="Avg. Tickets Resolved" value="2,176" color="#3161F8" />
                   </div>
                   <div className="relative h-96 min-w-[320px] flex-1">
-                    {/* Chart would be rendered here */}
-                    <div className="bg-muted/50 h-full w-full rounded-lg"></div>
+                    <ReactECharts
+                      option={ticketsChartOption}
+                      style={{ height: '100%', width: '100%' }}
+                    />
                   </div>
                 </div>
               </ChartSection>
@@ -73,8 +199,10 @@ export default function Dashboard() {
                   <span className="text-muted-foreground/60">Sales</span>
                 </div>
                 <div className="relative max-h-80 flex-grow">
-                  {/* Chart would be rendered here */}
-                  <div className="bg-muted/50 h-full w-full rounded-lg"></div>
+                  <ReactECharts
+                    option={conversionsChartOption}
+                    style={{ height: '100%', width: '100%' }}
+                  />
                 </div>
               </ChartSection>
             </div>
@@ -86,15 +214,17 @@ export default function Dashboard() {
             <div className="max-w-8xl tablet:px-10 desktop:px-14 laptop:col-span-1 mx-auto w-full px-6 py-4">
               <ChartSection title="Ticket By Channels" icon="rss">
                 <div className="relative flex min-h-64 flex-grow flex-col justify-center">
-                  {/* Chart would be rendered here */}
-                  <div className="bg-muted/50 h-full w-full rounded-lg"></div>
+                  <ReactECharts
+                    option={channelsChartOption}
+                    style={{ height: '100%', width: '100%' }}
+                  />
                 </div>
               </ChartSection>
             </div>
 
             {/* Customer Satisfaction */}
             <div className="max-w-8xl tablet:px-10 desktop:px-14 laptop:col-span-1 mx-auto w-full px-6 py-4">
-              <ChartSection title="Customer Satisfication" icon="smile-plus">
+              <ChartSection title="Customer Satisfaction" icon="smile-plus">
                 <div className="my-4 flex h-full items-center justify-between">
                   <div className="mx-auto grid w-full grid-cols-2 gap-6">
                     <div className="flex flex-col items-start justify-center">
@@ -304,7 +434,6 @@ function SatisfactionMetric({
         </div>
       </div>
       <div className="relative">
-        {/* Progress bar would be here */}
         <div className={`h-2 w-full rounded-full ${bgColor}`}>
           <div className={`h-full rounded-full ${textColor}`} style={{ width: percentage }}></div>
         </div>

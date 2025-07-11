@@ -1,7 +1,7 @@
 {
-  "next-js": 2,
-  "tailwind": 1,
-  "guide": 1,
   "multi-author": 1,
-  "feature": 1
+  "next-js": 2,
+  "feature": 1,
+  "tailwind": 1,
+  "guide": 1
 }
