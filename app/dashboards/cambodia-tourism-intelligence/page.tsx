@@ -102,12 +102,14 @@ export default function Dashboard() {
       textStyle: {
         color: '#6b7280', // gray-500
       },
+      padding: [20, 0, 0, 0], // Add padding to prevent overlap
     },
     series: [
       {
         name: 'Sales',
         type: 'pie',
         radius: ['40%', '70%'],
+        center: ['50%', '55%'], // Adjust center to account for legend
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 10,
@@ -256,24 +258,6 @@ export default function Dashboard() {
             change="-5%"
             changeType="negative"
             description="vs last month"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                <path d="M13 5v2" />
-                <path d="M13 17v2" />
-                <path d="M13 11v2" />
-              </svg>
-            }
           />
           <StatCard
             title="Unsolved Tickets"
@@ -281,23 +265,6 @@ export default function Dashboard() {
             change="+2%"
             changeType="positive"
             description="vs last month"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" x2="12" y1="8" y2="12" />
-                <line x1="12" x2="12.01" y1="16" y2="16" />
-              </svg>
-            }
           />
           <StatCard
             title="Resolved Tickets"
@@ -305,22 +272,6 @@ export default function Dashboard() {
             change="+8%"
             changeType="positive"
             description="vs last month"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
-            }
           />
           <StatCard
             title="Avg. First Reply"
@@ -328,22 +279,6 @@ export default function Dashboard() {
             change="+8%"
             changeType="positive"
             description="vs last month"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            }
           />
         </div>
 
@@ -409,7 +344,7 @@ export default function Dashboard() {
                 </svg>
               }
             >
-              <div className="relative h-64 flex-grow sm:h-72">
+              <div className="relative h-64 w-full sm:h-72">
                 <ReactECharts
                   option={conversionsChartOption}
                   style={{ height: '100%', width: '100%' }}
@@ -476,8 +411,8 @@ export default function Dashboard() {
                 </svg>
               }
             >
-              <div className="my-4 flex h-full items-center justify-between">
-                <div className="mx-auto grid w-full grid-cols-2 gap-4 sm:gap-6">
+              <div className="flex h-full items-center justify-center">
+                <div className="grid w-full grid-cols-2 gap-4 sm:gap-6">
                   <div className="flex flex-col items-start justify-center">
                     <div className="text-xs text-gray-500">Responses Received</div>
                     <div className="text-xl font-semibold text-gray-900 sm:text-2xl">
@@ -498,21 +433,19 @@ export default function Dashboard() {
   )
 }
 
-// Enhanced StatCard component
+// Enhanced StatCard component (without icon)
 function StatCard({
   title,
   value,
   change,
   changeType,
   description,
-  icon,
 }: {
   title: string
   value: string
   change: string
   changeType: 'positive' | 'negative'
   description: string
-  icon: React.ReactNode
 }) {
   const changeClasses = {
     positive: 'bg-green-100 text-green-800',
@@ -561,21 +494,18 @@ function StatCard({
 
   return (
     <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md sm:p-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-sm font-medium text-gray-500">{title}</h2>
-          <div className="mt-1 flex items-center gap-2">
-            <span className="text-xl font-semibold text-gray-900 sm:text-2xl">{value}</span>
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${changeClasses[changeType]}`}
-            >
-              {change}
-              {arrowIcon}
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-gray-500">{description}</p>
+      <div>
+        <h2 className="text-sm font-medium text-gray-500">{title}</h2>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="text-xl font-semibold text-gray-900 sm:text-2xl">{value}</span>
+          <span
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${changeClasses[changeType]}`}
+          >
+            {change}
+            {arrowIcon}
+          </span>
         </div>
-        <div className="rounded-lg bg-gray-100 p-2 sm:p-3">{icon}</div>
+        <p className="mt-1 text-xs text-gray-500">{description}</p>
       </div>
     </section>
   )
