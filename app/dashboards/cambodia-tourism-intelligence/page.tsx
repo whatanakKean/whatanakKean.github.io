@@ -260,21 +260,21 @@ export default function Dashboard() {
             description="vs last month"
           />
           <StatCard
-            title="Unsolved Tickets"
+            title="Average Length of Stays"
             value="45,640"
             change="+2%"
             changeType="positive"
             description="vs last month"
           />
           <StatCard
-            title="Average Length of Stays"
+            title="Hotel Occupancy"
             value="18,208"
             change="+8%"
             changeType="positive"
             description="vs last month"
           />
           <StatCard
-            title="Hotel Occupancy"
+            title="International Tourism Receipts"
             value="18,208"
             change="+8%"
             changeType="positive"
@@ -287,7 +287,7 @@ export default function Dashboard() {
           {/* Average Tickets Chart - takes 2/3 width on large screens */}
           <div className="lg:col-span-2">
             <ChartSection
-              title="International Tourism Receipts"
+              title="Arrival By Country"
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -360,7 +360,7 @@ export default function Dashboard() {
           {/* Tickets by Channel */}
           <div>
             <ChartSection
-              title="Tickets by Channel"
+              title="Inbound Tourism"
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -391,7 +391,7 @@ export default function Dashboard() {
           {/* Customer Satisfaction */}
           <div>
             <ChartSection
-              title="Customer Satisfaction"
+              title="Outbound Tourism"
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -404,26 +404,17 @@ export default function Dashboard() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                  <line x1="9" x2="9.01" y1="9" y2="9" />
-                  <line x1="15" x2="15.01" y1="9" y2="9" />
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                  <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
                 </svg>
               }
             >
-              <div className="flex h-full items-center justify-center">
-                <div className="grid w-full grid-cols-2 gap-4 sm:gap-6">
-                  <div className="flex flex-col items-start justify-center">
-                    <div className="text-xs text-gray-500">Responses Received</div>
-                    <div className="text-xl font-semibold text-gray-900 sm:text-2xl">
-                      156 Customers
-                    </div>
-                  </div>
-
-                  <SatisfactionMetric type="positive" percentage="80%" />
-                  <SatisfactionMetric type="neutral" percentage="15%" />
-                  <SatisfactionMetric type="negative" percentage="5%" />
-                </div>
+              <div className="relative h-64 w-full sm:h-80">
+                <ReactECharts
+                  option={channelsChartOption}
+                  style={{ height: '100%', width: '100%' }}
+                  opts={{ renderer: 'svg' }}
+                />
               </div>
             </ChartSection>
           </div>
