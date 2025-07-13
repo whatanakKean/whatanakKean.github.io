@@ -277,7 +277,7 @@ export default function Dashboard() {
           />
           <StatCard
             title="Unsolved Tickets"
-            value="4,564"
+            value="45,640"
             change="+2%"
             changeType="positive"
             description="vs last month"
@@ -409,10 +409,6 @@ export default function Dashboard() {
                 </svg>
               }
             >
-              <div className="mt-3">
-                <span className="mr-1 text-2xl font-semibold text-gray-900">17,220</span>
-                <span className="text-gray-500">Sales</span>
-              </div>
               <div className="relative h-64 flex-grow sm:h-72">
                 <ReactECharts
                   option={conversionsChartOption}
