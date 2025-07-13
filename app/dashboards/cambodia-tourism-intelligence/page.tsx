@@ -103,13 +103,16 @@ export default function Dashboard() {
         color: '#6b7280', // gray-500
       },
       padding: [20, 0, 0, 0], // Add padding to prevent overlap
+      itemGap: 10, // Add gap between legend items
+      itemWidth: 12, // Set width of legend color indicator
+      itemHeight: 12, // Set height of legend color indicator
     },
     series: [
       {
         name: 'Sales',
         type: 'pie',
         radius: ['40%', '70%'],
-        center: ['50%', '55%'], // Adjust center to account for legend
+        center: ['50%', '60%'], // Adjust center to account for legend
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 10,
@@ -411,8 +414,8 @@ export default function Dashboard() {
                 </svg>
               }
             >
-              <div className="flex h-full items-center justify-center">
-                <div className="grid w-full grid-cols-2 gap-4 sm:gap-6">
+              <div className="flex h-full items-center justify-center p-4">
+                <div className="grid w-full max-w-md grid-cols-2 gap-4 sm:gap-6">
                   <div className="flex flex-col items-start justify-center">
                     <div className="text-xs text-gray-500">Responses Received</div>
                     <div className="text-xl font-semibold text-gray-900 sm:text-2xl">
@@ -493,19 +496,19 @@ function StatCard({
     )
 
   return (
-    <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md sm:p-5">
+    <section className="flex h-full flex-col justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md sm:p-5">
       <div>
         <h2 className="text-sm font-medium text-gray-500">{title}</h2>
-        <div className="mt-1 flex items-center gap-2">
-          <span className="text-xl font-semibold text-gray-900 sm:text-2xl">{value}</span>
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${changeClasses[changeType]}`}
-          >
-            {change}
-            {arrowIcon}
-          </span>
-        </div>
-        <p className="mt-1 text-xs text-gray-500">{description}</p>
+        <span className="text-xl font-semibold text-gray-900 sm:text-2xl">{value}</span>
+      </div>
+      <div className="mt-2 flex items-end justify-between">
+        <p className="text-xs text-gray-500">{description}</p>
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${changeClasses[changeType]}`}
+        >
+          {change}
+          {arrowIcon}
+        </span>
       </div>
     </section>
   )
