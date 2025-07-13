@@ -253,7 +253,7 @@ export default function Dashboard() {
         {/* Top Stats Row - 4 cards in a row */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
-            title="Created Tickets"
+            title="International Tourist Arrival"
             value="24,208"
             change="-5%"
             changeType="negative"
@@ -267,14 +267,14 @@ export default function Dashboard() {
             description="vs last month"
           />
           <StatCard
-            title="Resolved Tickets"
+            title="Average Length of Stays"
             value="18,208"
             change="+8%"
             changeType="positive"
             description="vs last month"
           />
           <StatCard
-            title="Avg. First Reply"
+            title="Hotel Occupancy"
             value="18,208"
             change="+8%"
             changeType="positive"
@@ -287,7 +287,7 @@ export default function Dashboard() {
           {/* Average Tickets Chart - takes 2/3 width on large screens */}
           <div className="lg:col-span-2">
             <ChartSection
-              title="Average Tickets Created"
+              title="International Tourism Receipts"
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
