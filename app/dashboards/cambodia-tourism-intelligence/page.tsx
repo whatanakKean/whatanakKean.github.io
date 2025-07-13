@@ -3,6 +3,18 @@
 import React from 'react'
 import ReactECharts from 'echarts-for-react'
 
+// Define types for ECharts
+type EChartsTooltipParams = {
+  name: string
+  value: number
+  seriesName: string
+  dataIndex: number
+}
+
+type BarItemStyleParams = {
+  dataIndex: number
+}
+
 export default function Dashboard() {
   // Fake data for charts
   const ticketsChartOption = {
@@ -136,7 +148,7 @@ export default function Dashboard() {
       axisPointer: {
         type: 'shadow',
       },
-      formatter: function (params: any) {
+      formatter: (params: EChartsTooltipParams[]) => {
         return `<div class="p-2 bg-white border border-gray-200 rounded shadow-sm">
           <div class="font-semibold text-gray-900">${params[0].name}</div>
           <div class="flex items-center justify-between mt-1">
@@ -199,7 +211,7 @@ export default function Dashboard() {
         type: 'bar',
         data: [1200, 2000, 1500, 800, 700],
         itemStyle: {
-          color: function (params: any) {
+          color: (params: BarItemStyleParams) => {
             const colors = ['#60C2FB', '#3161F8', '#5fb67a', '#f5c36e', '#da6d67']
             return colors[params.dataIndex]
           },
