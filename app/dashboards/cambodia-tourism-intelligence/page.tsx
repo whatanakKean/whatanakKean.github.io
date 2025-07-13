@@ -129,11 +129,21 @@ export default function Dashboard() {
     color: ['#60C2FB', '#3161F8', '#5fb67a', '#f5c36e', '#da6d67'],
   }
 
+  // Improved Tickets by Channel chart
   const channelsChartOption = {
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow',
+      },
+      formatter: function (params: any) {
+        return `<div class="p-2 bg-white border border-gray-200 rounded shadow-sm">
+          <div class="font-semibold text-gray-900">${params[0].name}</div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-gray-500">Tickets:</span>
+            <span class="font-medium">${params[0].value}</span>
+          </div>
+        </div>`
       },
       backgroundColor: '#ffffff',
       borderColor: '#e5e7eb',
@@ -144,23 +154,25 @@ export default function Dashboard() {
     },
     grid: {
       left: '3%',
-      right: '4%',
+      right: '8%',
       bottom: '3%',
+      top: '5%',
       containLabel: true,
     },
     xAxis: {
       type: 'value',
       axisLine: {
         lineStyle: {
-          color: '#e5e7eb', // gray-200
+          color: '#e5e7eb',
         },
       },
       axisLabel: {
-        color: '#6b7280', // gray-500
+        color: '#6b7280',
+        fontSize: 12,
       },
       splitLine: {
         lineStyle: {
-          color: '#f3f4f6', // gray-100
+          color: '#f3f4f6',
         },
       },
     },
@@ -169,11 +181,16 @@ export default function Dashboard() {
       data: ['Email', 'Chat', 'Phone', 'Social', 'Portal'],
       axisLine: {
         lineStyle: {
-          color: '#e5e7eb', // gray-200
+          color: '#e5e7eb',
         },
       },
       axisLabel: {
-        color: '#6b7280', // gray-500
+        color: '#6b7280',
+        fontSize: 12,
+        margin: 8,
+      },
+      axisTick: {
+        show: false,
       },
     },
     series: [
@@ -182,11 +199,29 @@ export default function Dashboard() {
         type: 'bar',
         data: [1200, 2000, 1500, 800, 700],
         itemStyle: {
-          color: function (params: { dataIndex: number }) {
+          color: function (params: any) {
             const colors = ['#60C2FB', '#3161F8', '#5fb67a', '#f5c36e', '#da6d67']
             return colors[params.dataIndex]
           },
           borderRadius: [0, 4, 4, 0],
+          opacity: 0.9,
+        },
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{c}',
+          color: '#6b7280',
+          fontSize: 12,
+          fontWeight: 'normal',
+        },
+        barWidth: '40%',
+        emphasis: {
+          itemStyle: {
+            opacity: 1,
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.2)',
+          },
         },
       },
     ],
@@ -382,7 +417,7 @@ export default function Dashboard() {
           {/* Tickets by Channel */}
           <div>
             <ChartSection
-              title="Ticket By Channels"
+              title="Tickets by Channel"
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -400,7 +435,7 @@ export default function Dashboard() {
                 </svg>
               }
             >
-              <div className="relative flex min-h-64 flex-grow flex-col justify-center">
+              <div className="relative h-64 w-full sm:h-80">
                 <ReactECharts
                   option={channelsChartOption}
                   style={{ height: '100%', width: '100%' }}
