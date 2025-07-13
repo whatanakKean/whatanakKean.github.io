@@ -324,7 +324,7 @@ export default function Dashboard() {
           />
           <StatCard
             title="Avg. First Reply"
-            value="12:01 min"
+            value="18,208"
             change="+8%"
             changeType="positive"
             description="vs last month"
