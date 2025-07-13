@@ -326,7 +326,7 @@ export default function Dashboard() {
           {/* Conversions Chart - takes 1/3 width on large screens */}
           <div className="lg:col-span-1">
             <ChartSection
-              title="Conversions"
+              title="International Tourist Arrivals"
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -339,14 +339,14 @@ export default function Dashboard() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                  <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
                 </svg>
               }
             >
-              <div className="relative h-64 w-full sm:h-72">
+              <div className="relative h-64 w-full sm:h-80">
                 <ReactECharts
-                  option={conversionsChartOption}
+                  option={channelsChartOption}
                   style={{ height: '100%', width: '100%' }}
                   opts={{ renderer: 'svg' }}
                 />
